@@ -1,0 +1,17 @@
+{
+  "name": "otbt",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Order of the Black Thorn online store application baseline.",
+  "type": "module",
+  "packageManager": "pnpm@11.1.3",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @otbt/storefront --filter @otbt/admin --filter @otbt/backend dev",
+    "dev:storefront": "pnpm --filter @otbt/storefront dev",
+    "dev:admin": "pnpm --filter @otbt/admin dev",
+    "dev:backend": "pnpm --filter @otbt/backend dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "verify": "pnpm run typecheck && pnpm run build"
+  }
+}
