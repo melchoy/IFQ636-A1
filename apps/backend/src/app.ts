@@ -6,7 +6,7 @@ import { healthRouter } from "./routes/health.js";
 
 export const app = express();
 
-app.use(cors({ origin: env.clientOrigin }));
+app.use(cors({ origin: env.clientOrigins }));
 app.use(express.json());
 
 app.use("/health", healthRouter);
