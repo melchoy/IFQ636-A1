@@ -1,0 +1,19 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - otbt
+
+    steps:
+      - name: Run deployment
+        run: sudo -n -u otbt /usr/local/bin/deploy/otbt
