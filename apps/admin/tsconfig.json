@@ -14,8 +14,19 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/ui/*": ["../../packages/ui/src/components/ui/*"],
+      "@/hooks/*": ["../../packages/ui/src/hooks/*"],
+      "@/lib/utils": ["../../packages/ui/src/lib/utils.ts"],
+      "@otbt/types": ["../../packages/types/src/index.ts"],
+      "@otbt/types/admin-users": ["../../packages/types/src/admin-users/index.ts"],
+      "@otbt/types/products": ["../../packages/types/src/products/index.ts"],
+      "@otbt/ui": ["../../packages/ui/src/index.ts"],
+      "@otbt/ui/globals.css": ["../../packages/ui/src/styles/globals.css"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "vite.config.ts"],
   "references": []
 }
