@@ -13,6 +13,7 @@
     "dev:admin": "pnpm --filter @otbt/admin dev",
     "dev:backend": "pnpm --filter @otbt/backend dev",
     "seed:admin": "pnpm --filter @otbt/backend exec tsx ../../seeds/scripts/admin.seed.ts",
+    "seed:products": "pnpm --filter @otbt/backend exec tsx ../../seeds/scripts/products.seed.ts",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "verify": "pnpm run typecheck && pnpm run build"
