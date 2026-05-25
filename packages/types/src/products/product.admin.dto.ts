@@ -1,7 +1,19 @@
-import type { Product } from "./product.entity.js";
+import type { Product, ProductUpdate } from "./product.entity.js";
 
 export type AdminProductListItem = Product;
 
 export interface AdminProductListResponse {
   products: AdminProductListItem[];
+}
+
+export type AdminProductDetail = Product;
+
+export interface AdminProductDetailResponse {
+  product: AdminProductDetail;
+}
+
+export type AdminProductUpdateRequest = ProductUpdate;
+
+export interface AdminProductUpdateResponse {
+  product: AdminProductDetail;
 }
