@@ -19,3 +19,20 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+export const EDITABLE_PRODUCT_FIELDS = [
+  "name",
+  "sku",
+  "description",
+  "imageUrl",
+  "price",
+  "stock",
+  "status",
+  "visibility",
+] as const satisfies readonly (keyof Product)[];
+
+export type EditableProductField = (typeof EDITABLE_PRODUCT_FIELDS)[number];
+
+export type EditableProduct = Pick<Product, EditableProductField>;
+
+export type ProductUpdate = Partial<EditableProduct>;

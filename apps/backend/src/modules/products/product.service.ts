@@ -1,4 +1,5 @@
-import type { Product } from "@otbt/types";
+import { isValidObjectId } from "mongoose";
+import type { Product, ProductUpdate } from "@otbt/types";
 
 import { ProductModel, type ProductDocument } from "./product.model.js";
 
@@ -29,4 +30,32 @@ export async function listProducts(): Promise<Product[]> {
     .exec();
 
   return products.map((product) => serializeProduct(product));
+}
+
+export async function getProduct(productId: string): Promise<Product | null> {
+  if (!isValidObjectId(productId)) {
+    return null;
+  }
+
+  const product = await ProductModel.findById(productId).lean<ProductRecord>().exec();
+
+  return product ? serializeProduct(product) : null;
+}
+
+export async function updateProduct(
+  productId: string,
+  product: ProductUpdate,
+): Promise<Product | null> {
+  if (!isValidObjectId(productId)) {
+    return null;
+  }
+
+  const updatedProduct = await ProductModel.findByIdAndUpdate(productId, product, {
+    new: true,
+    runValidators: true,
+  })
+    .lean<ProductRecord>()
+    .exec();
+
+  return updatedProduct ? serializeProduct(updatedProduct) : null;
 }
