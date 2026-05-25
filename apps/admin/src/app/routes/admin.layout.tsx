@@ -1,10 +1,20 @@
-import { Avatar, AvatarFallback, AvatarImage, Button, Input, SidebarProvider, SidebarTrigger } from "@otbt/ui";
+import { Button, Input, SidebarProvider, SidebarTrigger } from "@otbt/ui";
 import { Bell, MessageSquareMore, Package2, Search } from "lucide-react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 
 import { AdminSidebar } from "../../components/sidebar";
+import { AccountMenu } from "../../modules/admin-shell";
+import { useAuth } from "../../modules/auth";
 
 export function AdminLayout() {
+  const { adminUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
+
   return (
     <SidebarProvider className="flex-col">
       <div className="shell min-h-svh bg-background">
@@ -35,21 +45,7 @@ export function AdminLayout() {
                 <MessageSquareMore className="size-4" />
                 <span className="sr-only">Messages</span>
               </Button>
-              <Button
-                aria-expanded="false"
-                aria-haspopup="menu"
-                aria-label="Open user menu"
-                className="h-10 rounded-full p-0 hover:bg-accent/80"
-                type="button"
-                variant="ghost"
-              >
-                <Avatar className="size-8 rounded-full">
-                  <AvatarImage alt="Admin user" src="" />
-                  <AvatarFallback className="size-full rounded-full bg-primary font-medium text-primary-foreground">
-                    A
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
+              <AccountMenu adminUser={adminUser} onSignOut={handleLogout} />
             </div>
           </div>
         </header>
