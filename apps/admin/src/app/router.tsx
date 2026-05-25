@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 
 import { RequireAdmin, requireAdminSession } from "../modules/auth";
+import { productListLoader } from "../modules/products";
 import { AdminLayout } from "./routes/admin.layout";
 import { CatalogueListPage } from "./routes/catalog/list.page";
 import { LoginPage } from "./routes/login/login.page";
@@ -31,7 +32,7 @@ export const router = createBrowserRouter(
           children: [
             {
               element: <AdminLayout />,
-              children: [{ index: true, element: <CatalogueListPage /> }],
+              children: [{ index: true, loader: productListLoader, element: <CatalogueListPage /> }],
             },
           ],
         },
