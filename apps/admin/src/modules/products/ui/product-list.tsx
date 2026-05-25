@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 import { useEffect, useId, useRef, useState } from "react";
+import { Link } from "react-router";
 import { MoreHorizontal } from "lucide-react";
 
 import type { AdminProductListItem as ProductListItem } from "@otbt/types";
@@ -60,7 +61,12 @@ export function ProductList({ products }: ProductListProps) {
                 key={product.id}
               >
                 <td className="p-4 align-middle">
-                  <p className="font-medium text-foreground transition-colors hover:text-primary">{product.name}</p>
+                  <Link
+                    className="font-medium text-foreground transition-colors hover:text-primary"
+                    to={`/products/${product.id}`}
+                  >
+                    {product.name}
+                  </Link>
                   <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
                 </td>
                 <td className="p-4 align-middle">${product.price.toFixed(2)}</td>
@@ -141,14 +147,14 @@ function ProductActions({ product }: { product: ProductListItem }) {
           id={menuId}
           role="menu"
         >
-          <button
+          <Link
             className="flex w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
             onClick={closeMenu}
             role="menuitem"
-            type="button"
+            to={`/products/${product.id}`}
           >
             Edit
-          </button>
+          </Link>
           <button
             className="flex w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
             onClick={closeMenu}
