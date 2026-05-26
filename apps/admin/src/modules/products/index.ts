@@ -1,4 +1,5 @@
 export {
+  useCreateProduct,
   useProductDetail,
   useProductList,
   useRemoveProductImage,

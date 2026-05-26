@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import type { AdminProductUpdateRequest as ProductUpdateRequest } from "@otbt/types";
+import type {
+  AdminProductUpdateRequest as ProductUpdateRequest,
+  ProductCreate,
+} from "@otbt/types";
 
 import { queryClient } from "../../lib/query-client";
 import {
@@ -9,6 +12,7 @@ import {
   productListQuery,
 } from "./products.query";
 import {
+  createProduct,
   removeProductImage,
   updateProduct,
   uploadProductImage,
@@ -32,6 +36,15 @@ export function useProductDetail(productId: string) {
   }
 
   return productDetail;
+}
+
+export function useCreateProduct() {
+  return useMutation({
+    mutationFn: (product: ProductCreate) => createProduct(product),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: productListQuery.queryKey });
+    },
+  });
 }
 
 export function useUpdateProduct(productId: string) {

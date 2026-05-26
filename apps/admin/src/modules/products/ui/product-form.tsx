@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { ImageIcon, Trash2 } from "lucide-react";
 
 import type {
-  AdminProductUpdateRequest,
   EditableProduct,
   ProductStatus,
   ProductVisibility,
@@ -14,16 +13,21 @@ import { Button, Card, CardContent, Input } from "@otbt/ui";
 
 type ProductDraft = EditableProduct;
 
+type ProductImageControls = {
+  onImageRemove: () => Promise<string | undefined>;
+  onImageUpload: (file: File) => Promise<string>;
+  removingImage: boolean;
+  uploadingImage: boolean;
+};
+
 interface ProductFormProps {
   defaultValues: EditableProduct;
   error: Error | null;
   formId: string;
-  onImageRemove: () => Promise<string | undefined>;
-  onImageUpload: (file: File) => Promise<string>;
-  onSubmit: (product: AdminProductUpdateRequest) => Promise<void>;
-  removingImage: boolean;
+  imageControls?: ProductImageControls;
+  onSubmit: (product: EditableProduct) => Promise<void>;
   submitting: boolean;
-  uploadingImage: boolean;
+  submitLabel?: string;
 }
 
 const statusLabels: Record<ProductStatus, string> = {
@@ -42,12 +46,10 @@ export function ProductForm({
   defaultValues,
   error,
   formId,
-  onImageRemove,
-  onImageUpload,
+  imageControls,
   onSubmit,
-  removingImage,
   submitting,
-  uploadingImage,
+  submitLabel,
 }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
@@ -78,14 +80,14 @@ export function ProductForm({
   }
 
   async function uploadSelectedImage(file: File | null) {
-    if (!file) {
+    if (!file || !imageControls) {
       return;
     }
 
     setImageUploadError(null);
 
     try {
-      const imageUrl = await onImageUpload(file);
+      const imageUrl = await imageControls.onImageUpload(file);
       updateDraft("imageUrl", imageUrl);
     } catch (error) {
       setImageUploadError(error instanceof Error ? error.message : "Image upload failed");
@@ -97,10 +99,14 @@ export function ProductForm({
   }
 
   async function removeCurrentImage() {
+    if (!imageControls) {
+      return;
+    }
+
     setImageUploadError(null);
 
     try {
-      const imageUrl = await onImageRemove();
+      const imageUrl = await imageControls.onImageRemove();
       updateDraft("imageUrl", imageUrl);
     } catch (error) {
       setImageUploadError(error instanceof Error ? error.message : "Image removal failed");
@@ -148,71 +154,81 @@ export function ProductForm({
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label
-                  className="text-sm font-medium leading-none"
-                  htmlFor={`${formId}-image`}
-                >
-                  Product image
-                </label>
-                <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed bg-muted/30 px-4 py-8 text-center">
-                  {draftProduct.imageUrl ? (
-                    <img
-                      alt="Product preview"
-                      className="h-56 w-full rounded-md border bg-background object-contain"
-                      src={draftProduct.imageUrl}
-                    />
-                  ) : (
-                    <>
-                      <div className="flex size-9 items-center justify-center rounded-md border bg-background">
-                        <ImageIcon className="size-4 text-muted-foreground" />
-                      </div>
-                      <p className="text-xs text-muted-foreground">Upload product image</p>
-                    </>
-                  )}
-
-                  <input
-                    accept="image/*"
-                    className="hidden"
-                    disabled={submitting || uploadingImage}
-                    id={`${formId}-image`}
-                    onChange={(event) =>
-                      uploadSelectedImage(event.currentTarget.files?.[0] ?? null)
-                    }
-                    ref={fileInputRef}
-                    type="file"
-                  />
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      disabled={submitting || uploadingImage || removingImage}
-                      onClick={() => fileInputRef.current?.click()}
-                      size="sm"
-                      type="button"
-                      variant="outline"
-                    >
-                      {uploadingImage ? "Uploading..." : "Choose file"}
-                    </Button>
-
+              {imageControls ? (
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className="text-sm font-medium leading-none"
+                    htmlFor={`${formId}-image`}
+                  >
+                    Product image
+                  </label>
+                  <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed bg-muted/30 px-4 py-8 text-center">
                     {draftProduct.imageUrl ? (
+                      <img
+                        alt="Product preview"
+                        className="h-56 w-full rounded-md border bg-background object-contain"
+                        src={draftProduct.imageUrl}
+                      />
+                    ) : (
+                      <>
+                        <div className="flex size-9 items-center justify-center rounded-md border bg-background">
+                          <ImageIcon className="size-4 text-muted-foreground" />
+                        </div>
+                        <p className="text-xs text-muted-foreground">Upload product image</p>
+                      </>
+                    )}
+
+                    <input
+                      accept="image/*"
+                      className="hidden"
+                      disabled={submitting || imageControls.uploadingImage}
+                      id={`${formId}-image`}
+                      onChange={(event) =>
+                        uploadSelectedImage(event.currentTarget.files?.[0] ?? null)
+                      }
+                      ref={fileInputRef}
+                      type="file"
+                    />
+
+                    <div className="flex items-center gap-2">
                       <Button
-                        disabled={submitting || uploadingImage || removingImage}
-                        onClick={removeCurrentImage}
+                        disabled={
+                          submitting ||
+                          imageControls.uploadingImage ||
+                          imageControls.removingImage
+                        }
+                        onClick={() => fileInputRef.current?.click()}
                         size="sm"
                         type="button"
                         variant="outline"
                       >
-                        <Trash2 className="size-4" />
-                        {removingImage ? "Removing..." : "Remove"}
+                        {imageControls.uploadingImage ? "Uploading..." : "Choose file"}
                       </Button>
+
+                      {draftProduct.imageUrl ? (
+                        <Button
+                          disabled={
+                            submitting ||
+                            imageControls.uploadingImage ||
+                            imageControls.removingImage
+                          }
+                          onClick={removeCurrentImage}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          <Trash2 className="size-4" />
+                          {imageControls.removingImage ? "Removing..." : "Remove"}
+                        </Button>
+                      ) : null}
+                    </div>
+
+                    {imageUploadError ? (
+                      <p className="text-xs text-destructive">{imageUploadError}</p>
                     ) : null}
                   </div>
-
-                  {imageUploadError ? (
-                    <p className="text-xs text-destructive">{imageUploadError}</p>
-                  ) : null}
                 </div>
-              </div>
+              ) : null}
             </div>
 
             <div className="flex flex-col gap-4">
@@ -333,7 +349,7 @@ export function ProductForm({
               </div>
 
               <Button className="hidden" disabled={submitting} type="submit">
-                Save Changes
+                {submitLabel ?? "Save Changes"}
               </Button>
             </div>
           </div>

@@ -1,8 +1,10 @@
 import type {
+  AdminProductCreateResponse as ProductCreateResponse,
   AdminProductDetailResponse as ProductDetailResponse,
   AdminProductListResponse as ProductListResponse,
   AdminProductUpdateRequest as ProductUpdateRequest,
   AdminProductUpdateResponse as ProductUpdateResponse,
+  ProductCreate,
 } from "@otbt/types";
 
 import {
@@ -25,6 +27,13 @@ export function fetchProductDetail(productId: string) {
 export function updateProduct(productId: string, product: ProductUpdateRequest) {
   return adminHttpRequest<ProductUpdateResponse>(`/products/${productId}`, {
     method: "PATCH",
+    body: JSON.stringify(product),
+  });
+}
+
+export function createProduct(product: ProductCreate) {
+  return adminHttpRequest<ProductCreateResponse>("/products", {
+    method: "POST",
     body: JSON.stringify(product),
   });
 }
