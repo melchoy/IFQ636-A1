@@ -1,5 +1,6 @@
-import dotenv from "dotenv";
 import path from "node:path";
+
+import dotenv from "dotenv";
 
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 dotenv.config();
@@ -20,4 +21,5 @@ export const env = {
     .filter(Boolean),
   mongodbUri: required("MONGODB_URI"),
   adminJwtSecret: required("ADMIN_JWT_SECRET"),
+  uploadsDir: process.env.UPLOADS_DIR ?? path.resolve(process.cwd(), "uploads"),
 };

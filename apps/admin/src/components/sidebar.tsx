@@ -22,7 +22,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-	{ key: "products", label: "Products", href: "#", icon: Package },
+	{ key: "products", label: "Products", href: "/", icon: Package },
 	{ key: "add-product", label: "Add Product", href: "#", icon: Plus },
 ];
 

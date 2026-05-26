@@ -6,13 +6,14 @@
   "type": "module",
   "packageManager": "pnpm@11.1.3",
   "scripts": {
-    "dev": "pnpm run dev:nginx:up && pnpm --parallel --filter @otbt/storefront --filter @otbt/admin --filter @otbt/backend dev",
+    "dev": "node scripts/dev.mjs",
     "dev:nginx:up": "docker compose up -d nginx",
     "dev:nginx:down": "docker compose down",
     "dev:storefront": "pnpm --filter @otbt/storefront dev",
     "dev:admin": "pnpm --filter @otbt/admin dev",
     "dev:backend": "pnpm --filter @otbt/backend dev",
     "seed:admin": "pnpm --filter @otbt/backend exec tsx ../../seeds/scripts/admin.seed.ts",
+    "seed:products": "pnpm --filter @otbt/backend exec tsx ../../seeds/scripts/products.seed.ts",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "verify": "pnpm run typecheck && pnpm run build"

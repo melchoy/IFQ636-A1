@@ -1,7 +1,9 @@
 import { createBrowserRouter } from "react-router";
 
 import { RequireAdmin, requireAdminSession } from "../modules/auth";
+import { productEditLoader, productListLoader } from "../modules/products";
 import { AdminLayout } from "./routes/admin.layout";
+import { CatalogueEditPage } from "./routes/catalog/edit.page";
 import { CatalogueListPage } from "./routes/catalog/list.page";
 import { LoginPage } from "./routes/login/login.page";
 import { PublicLayout } from "./routes/public.layout";
@@ -31,7 +33,14 @@ export const router = createBrowserRouter(
           children: [
             {
               element: <AdminLayout />,
-              children: [{ index: true, element: <CatalogueListPage /> }],
+              children: [
+                { index: true, loader: productListLoader, element: <CatalogueListPage /> },
+                {
+                  path: "products/:productId",
+                  loader: productEditLoader,
+                  element: <CatalogueEditPage />,
+                },
+              ],
             },
           ],
         },

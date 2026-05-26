@@ -10,6 +10,7 @@ export const app = express();
 
 app.use(cors({ origin: env.clientOrigins }));
 app.use(express.json());
+app.use("/uploads", express.static(env.uploadsDir));
 
 app.use("/health", healthRouter);
 app.use("/api/admin", adminRouter);
