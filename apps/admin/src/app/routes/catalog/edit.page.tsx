@@ -94,12 +94,14 @@ export function CatalogueEditPage() {
         defaultValues={product}
         error={updateProduct.error}
         formId="product-edit-form"
-        onImageRemove={removeProductImageFile}
-        onImageUpload={uploadProductImageFile}
+        imageControls={{
+          onImageRemove: removeProductImageFile,
+          onImageUpload: uploadProductImageFile,
+          removingImage: removeProductImage.isPending,
+          uploadingImage: uploadProductImage.isPending,
+        }}
         onSubmit={saveProduct}
-        removingImage={removeProductImage.isPending}
         submitting={updateProduct.isPending}
-        uploadingImage={uploadProductImage.isPending}
       />
     </section>
   );

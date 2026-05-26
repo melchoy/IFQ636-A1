@@ -23,7 +23,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
 	{ key: "products", label: "Products", href: "/", icon: Package },
-	{ key: "add-product", label: "Add Product", href: "#", icon: Plus },
+	{ key: "add-product", label: "Add Product", href: "/products/new", icon: Plus },
 ];
 
 export function AdminSidebar() {
