@@ -10,8 +10,12 @@ import multer from "multer";
 
 import { HttpError } from "../../middleware/error-handler.js";
 import { requireAdmin } from "../../middleware/require-admin.js";
-import { storeProductImage } from "../../modules/product-images/product-image.service.js";
 import {
+  deleteProductImage,
+  storeProductImage,
+} from "../../modules/product-images/product-image.service.js";
+import {
+  clearProductImage,
   getProduct,
   listProducts,
   updateProduct,
@@ -82,6 +86,33 @@ adminProductsRouter.post(
     }
   },
 );
+
+adminProductsRouter.delete("/:productId/image", requireAdmin, async (req, res, next) => {
+  try {
+    const productId = getProductIdParam(req.params.productId);
+    const product = await getProduct(productId);
+
+    if (!product) {
+      throw new HttpError(404, "Product not found");
+    }
+
+    if (product.imageUrl) {
+      await deleteProductImage(product.imageUrl);
+    }
+
+    const updatedProduct = await clearProductImage(productId);
+
+    if (!updatedProduct) {
+      throw new HttpError(404, "Product not found");
+    }
+
+    const response: AdminProductUpdateResponse = { product: updatedProduct };
+
+    res.json(response);
+  } catch (error) {
+    handleProductRouteError(error, next);
+  }
+});
 
 adminProductsRouter.get("/", requireAdmin, async (_req, res, next) => {
   try {

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { env } from "../../config/env.js";
@@ -40,4 +40,28 @@ export async function storeProductImage(input: StoreProductImageInput): Promise<
     imageUrl: `${productImagesUrlPath}/${filename}`,
     path: imagePath,
   };
+}
+
+function getProductImagePathFromUrl(imageUrl: string) {
+  if (!imageUrl.startsWith(`${productImagesUrlPath}/`)) {
+    return null;
+  }
+
+  const filename = path.basename(imageUrl);
+
+  if (!filename) {
+    return null;
+  }
+
+  return path.join(env.uploadsDir, productImagesDirectoryName, filename);
+}
+
+export async function deleteProductImage(imageUrl: string) {
+  const imagePath = getProductImagePathFromUrl(imageUrl);
+
+  if (!imagePath) {
+    return;
+  }
+
+  await rm(imagePath, { force: true });
 }

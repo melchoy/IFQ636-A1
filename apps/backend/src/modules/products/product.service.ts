@@ -59,3 +59,22 @@ export async function updateProduct(
 
   return updatedProduct ? serializeProduct(updatedProduct) : null;
 }
+
+export async function clearProductImage(productId: string): Promise<Product | null> {
+  if (!isValidObjectId(productId)) {
+    return null;
+  }
+
+  const updatedProduct = await ProductModel.findByIdAndUpdate(
+    productId,
+    { $unset: { imageUrl: "" } },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .lean<ProductRecord>()
+    .exec();
+
+  return updatedProduct ? serializeProduct(updatedProduct) : null;
+}
