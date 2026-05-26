@@ -13,7 +13,9 @@ import {
 import {
   ProductForm,
   useProductDetail,
+  useRemoveProductImage,
   useUpdateProduct,
+  useUploadProductImage,
 } from "../../../modules/products";
 
 type ProductEditLoaderData = {
@@ -25,10 +27,22 @@ export function CatalogueEditPage() {
   const { product } = useProductDetail(productId);
   const navigate = useNavigate();
   const updateProduct = useUpdateProduct(productId);
+  const uploadProductImage = useUploadProductImage(productId);
+  const removeProductImage = useRemoveProductImage(productId);
 
   async function saveProduct(productDraft: ProductUpdateRequest) {
     await updateProduct.mutateAsync(productDraft);
     navigate("/");
+  }
+
+  async function uploadProductImageFile(file: File) {
+    const response = await uploadProductImage.mutateAsync(file);
+    return response.imageUrl;
+  }
+
+  async function removeProductImageFile() {
+    const response = await removeProductImage.mutateAsync();
+    return response.product.imageUrl;
   }
 
   return (
@@ -80,8 +94,12 @@ export function CatalogueEditPage() {
         defaultValues={product}
         error={updateProduct.error}
         formId="product-edit-form"
+        onImageRemove={removeProductImageFile}
+        onImageUpload={uploadProductImageFile}
         onSubmit={saveProduct}
+        removingImage={removeProductImage.isPending}
         submitting={updateProduct.isPending}
+        uploadingImage={uploadProductImage.isPending}
       />
     </section>
   );

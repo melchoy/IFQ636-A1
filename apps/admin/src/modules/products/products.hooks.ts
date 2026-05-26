@@ -8,7 +8,11 @@ import {
   productDetailQueryKey,
   productListQuery,
 } from "./products.query";
-import { updateProduct } from "./products.request";
+import {
+  removeProductImage,
+  updateProduct,
+  uploadProductImage,
+} from "./products.request";
 
 export function useProductList() {
   const { data: productList } = useQuery(productListQuery);
@@ -33,6 +37,22 @@ export function useProductDetail(productId: string) {
 export function useUpdateProduct(productId: string) {
   return useMutation({
     mutationFn: (product: ProductUpdateRequest) => updateProduct(productId, product),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: productListQuery.queryKey });
+      await queryClient.invalidateQueries({ queryKey: productDetailQueryKey(productId) });
+    },
+  });
+}
+
+export function useUploadProductImage(productId: string) {
+  return useMutation({
+    mutationFn: (file: File) => uploadProductImage(productId, file),
+  });
+}
+
+export function useRemoveProductImage(productId: string) {
+  return useMutation({
+    mutationFn: () => removeProductImage(productId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: productListQuery.queryKey });
       await queryClient.invalidateQueries({ queryKey: productDetailQueryKey(productId) });

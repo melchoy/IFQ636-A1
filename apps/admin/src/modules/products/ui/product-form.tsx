@@ -1,5 +1,7 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+import { ImageIcon, Trash2 } from "lucide-react";
 
 import type {
   AdminProductUpdateRequest,
@@ -10,14 +12,18 @@ import type {
 import { PRODUCT_STATUSES, PRODUCT_VISIBILITIES } from "@otbt/types";
 import { Button, Card, CardContent, Input } from "@otbt/ui";
 
-type ProductDraft = Omit<EditableProduct, "imageUrl">;
+type ProductDraft = EditableProduct;
 
 interface ProductFormProps {
   defaultValues: EditableProduct;
   error: Error | null;
   formId: string;
+  onImageRemove: () => Promise<string | undefined>;
+  onImageUpload: (file: File) => Promise<string>;
   onSubmit: (product: AdminProductUpdateRequest) => Promise<void>;
+  removingImage: boolean;
   submitting: boolean;
+  uploadingImage: boolean;
 }
 
 const statusLabels: Record<ProductStatus, string> = {
@@ -36,13 +42,20 @@ export function ProductForm({
   defaultValues,
   error,
   formId,
+  onImageRemove,
+  onImageUpload,
   onSubmit,
+  removingImage,
   submitting,
+  uploadingImage,
 }: ProductFormProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
   const [draftProduct, setDraftProduct] = useState<ProductDraft>({
     name: defaultValues.name,
     sku: defaultValues.sku,
     description: defaultValues.description,
+    imageUrl: defaultValues.imageUrl,
     price: defaultValues.price,
     stock: defaultValues.stock,
     status: defaultValues.status,
@@ -62,6 +75,36 @@ export function ProductForm({
   async function submitProduct(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await onSubmit(draftProduct);
+  }
+
+  async function uploadSelectedImage(file: File | null) {
+    if (!file) {
+      return;
+    }
+
+    setImageUploadError(null);
+
+    try {
+      const imageUrl = await onImageUpload(file);
+      updateDraft("imageUrl", imageUrl);
+    } catch (error) {
+      setImageUploadError(error instanceof Error ? error.message : "Image upload failed");
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }
+
+  async function removeCurrentImage() {
+    setImageUploadError(null);
+
+    try {
+      const imageUrl = await onImageRemove();
+      updateDraft("imageUrl", imageUrl);
+    } catch (error) {
+      setImageUploadError(error instanceof Error ? error.message : "Image removal failed");
+    }
   }
 
   return (
@@ -103,6 +146,72 @@ export function ProductForm({
                   required
                   value={draftProduct.description}
                 />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label
+                  className="text-sm font-medium leading-none"
+                  htmlFor={`${formId}-image`}
+                >
+                  Product image
+                </label>
+                <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed bg-muted/30 px-4 py-8 text-center">
+                  {draftProduct.imageUrl ? (
+                    <img
+                      alt="Product preview"
+                      className="h-56 w-full rounded-md border bg-background object-contain"
+                      src={draftProduct.imageUrl}
+                    />
+                  ) : (
+                    <>
+                      <div className="flex size-9 items-center justify-center rounded-md border bg-background">
+                        <ImageIcon className="size-4 text-muted-foreground" />
+                      </div>
+                      <p className="text-xs text-muted-foreground">Upload product image</p>
+                    </>
+                  )}
+
+                  <input
+                    accept="image/*"
+                    className="hidden"
+                    disabled={submitting || uploadingImage}
+                    id={`${formId}-image`}
+                    onChange={(event) =>
+                      uploadSelectedImage(event.currentTarget.files?.[0] ?? null)
+                    }
+                    ref={fileInputRef}
+                    type="file"
+                  />
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      disabled={submitting || uploadingImage || removingImage}
+                      onClick={() => fileInputRef.current?.click()}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      {uploadingImage ? "Uploading..." : "Choose file"}
+                    </Button>
+
+                    {draftProduct.imageUrl ? (
+                      <Button
+                        disabled={submitting || uploadingImage || removingImage}
+                        onClick={removeCurrentImage}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        <Trash2 className="size-4" />
+                        {removingImage ? "Removing..." : "Remove"}
+                      </Button>
+                    ) : null}
+                  </div>
+
+                  {imageUploadError ? (
+                    <p className="text-xs text-destructive">{imageUploadError}</p>
+                  ) : null}
+                </div>
               </div>
             </div>
 

@@ -30,3 +30,20 @@ export function adminHttpRequest<T>(path: string, init: RequestInit = {}) {
     },
   });
 }
+
+export async function multipartRequest<T>(path: string, body: FormData): Promise<T> {
+  const token = getAdminToken();
+
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    method: "POST",
+    body,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+  if (!response.ok) {
+    const errorBody = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(errorBody?.error ?? "Request failed");
+  }
+
+  return response.json() as Promise<T>;
+}

@@ -1,7 +1,9 @@
 export {
   useProductDetail,
   useProductList,
+  useRemoveProductImage,
   useUpdateProduct,
+  useUploadProductImage,
 } from "./products.hooks";
 export { productEditLoader, productListLoader } from "./products.loader";
 export { productDetailQuery, productListQuery } from "./products.query";
