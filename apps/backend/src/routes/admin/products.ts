@@ -4,11 +4,13 @@ import type {
   AdminProductUpdateRequest,
   AdminProductUpdateResponse,
 } from "@otbt/types";
-import { Router } from "express";
+import { Router, type RequestHandler } from "express";
 import { Error as MongooseError } from "mongoose";
+import multer from "multer";
 
 import { HttpError } from "../../middleware/error-handler.js";
 import { requireAdmin } from "../../middleware/require-admin.js";
+import { storeProductImage } from "../../modules/product-images/product-image.service.js";
 import {
   getProduct,
   listProducts,
@@ -16,6 +18,19 @@ import {
 } from "../../modules/products/product.service.js";
 
 export const adminProductsRouter = Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+      return;
+    }
+
+    cb(new HttpError(400, "Only image uploads are allowed"));
+  },
+});
 
 function handleProductRouteError(error: unknown, next: (error: unknown) => void) {
   if (error instanceof MongooseError.ValidationError) {
@@ -29,6 +44,44 @@ function handleProductRouteError(error: unknown, next: (error: unknown) => void)
 function getProductIdParam(productId: string | string[]) {
   return Array.isArray(productId) ? productId[0] : productId;
 }
+
+const requireExistingProduct: RequestHandler = async (req, _res, next) => {
+  try {
+    const productId = getProductIdParam(req.params.productId);
+    const product = await getProduct(productId);
+
+    if (!product) {
+      throw new HttpError(404, "Product not found");
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+adminProductsRouter.post(
+  "/:productId/images",
+  requireAdmin,
+  requireExistingProduct,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      if (!req.file) {
+        throw new HttpError(400, "Image file is required");
+      }
+
+      const storedImage = await storeProductImage({
+        buffer: req.file.buffer,
+        originalName: req.file.originalname,
+      });
+
+      res.status(201).json({ imageUrl: storedImage.imageUrl });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 adminProductsRouter.get("/", requireAdmin, async (_req, res, next) => {
   try {
