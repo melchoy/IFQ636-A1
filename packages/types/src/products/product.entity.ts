@@ -35,4 +35,6 @@ export type EditableProductField = (typeof EDITABLE_PRODUCT_FIELDS)[number];
 
 export type EditableProduct = Pick<Product, EditableProductField>;
 
+export type ProductCreate = EditableProduct;
+
 export type ProductUpdate = Partial<EditableProduct>;
