@@ -1,4 +1,6 @@
 import type {
+  AdminProductCreateRequest,
+  AdminProductCreateResponse,
   AdminProductDetailResponse,
   AdminProductListResponse,
   AdminProductUpdateRequest,
@@ -16,6 +18,7 @@ import {
 } from "../../modules/product-images/product-image.service.js";
 import {
   clearProductImage,
+  createProduct,
   getProduct,
   listProducts,
   updateProduct,
@@ -122,6 +125,17 @@ adminProductsRouter.get("/", requireAdmin, async (_req, res, next) => {
     res.json(response);
   } catch (error) {
     next(error);
+  }
+});
+
+adminProductsRouter.post("/", requireAdmin, async (req, res, next) => {
+  try {
+    const product = await createProduct(req.body as AdminProductCreateRequest);
+    const response: AdminProductCreateResponse = { product };
+
+    res.status(201).json(response);
+  } catch (error) {
+    handleProductRouteError(error, next);
   }
 });
 
