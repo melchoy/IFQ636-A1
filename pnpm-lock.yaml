@@ -132,15 +132,33 @@ importers:
       '@otbt/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@otbt/web':
+        specifier: workspace:*
+        version: link:../../packages/web
+      '@tailwindcss/vite':
+        specifier: ^4.1.0
+        version: 4.3.0(vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.3))
+      '@tanstack/react-query':
+        specifier: ^5.100.14
+        version: 5.100.14(react@19.2.6)
       '@vitejs/plugin-react':
         specifier: ^5.0.0
         version: 5.2.0(vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.3))
+      lucide-react:
+        specifier: ^0.542.0
+        version: 0.542.0(react@19.2.6)
       react:
         specifier: ^19.0.0
         version: 19.2.6
       react-dom:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
+      react-router:
+        specifier: ^7.15.0
+        version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      tailwindcss:
+        specifier: ^4.1.0
+        version: 4.3.0
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
