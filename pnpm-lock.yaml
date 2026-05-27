@@ -16,6 +16,9 @@ importers:
       '@otbt/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@otbt/web':
+        specifier: workspace:*
+        version: link:../../packages/web
       '@tailwindcss/vite':
         specifier: ^4.1.0
         version: 4.3.0(vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.3))
@@ -203,6 +206,16 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.9.0
+        version: 5.9.3
+
+  packages/web:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.100.14
+        version: 5.100.14(react@19.2.6)
+    devDependencies:
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

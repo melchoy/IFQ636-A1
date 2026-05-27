@@ -1,49 +1,40 @@
+import {
+  jsonRequest,
+  multipartRequest as webMultipartRequest,
+} from "@otbt/web";
+
 import { getAdminToken } from "../modules/auth/auth.storage";
 
 const apiBaseUrl = import.meta.env.VITE_ADMIN_API_BASE_URL ?? "/api/admin";
 
-export async function httpRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+function getAuthHeaders(): Record<string, string> {
+  const token = getAdminToken();
+
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export function httpRequest<T>(path: string, init: RequestInit = {}) {
+  return jsonRequest<T>(path, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
+    baseUrl: apiBaseUrl,
   });
-
-  if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(body?.error ?? "Request failed");
-  }
-
-  return response.json() as Promise<T>;
 }
 
 export function adminHttpRequest<T>(path: string, init: RequestInit = {}) {
-  const token = getAdminToken();
-
-  return httpRequest<T>(path, {
+  return jsonRequest<T>(path, {
     ...init,
+    baseUrl: apiBaseUrl,
     headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...getAuthHeaders(),
       ...init.headers,
     },
   });
 }
 
-export async function multipartRequest<T>(path: string, body: FormData): Promise<T> {
-  const token = getAdminToken();
-
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    method: "POST",
+export function multipartRequest<T>(path: string, body: FormData) {
+  return webMultipartRequest<T>(path, {
+    baseUrl: apiBaseUrl,
     body,
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    headers: getAuthHeaders(),
   });
-
-  if (!response.ok) {
-    const errorBody = (await response.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(errorBody?.error ?? "Request failed");
-  }
-
-  return response.json() as Promise<T>;
 }

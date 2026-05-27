@@ -1,10 +1,3 @@
-import { QueryClient } from "@tanstack/react-query";
+import { createWebQueryClient } from "@otbt/web";
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      staleTime: 30_000,
-    },
-  },
-});
+export const queryClient = createWebQueryClient();

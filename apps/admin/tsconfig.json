@@ -24,7 +24,8 @@
       "@otbt/types/admin-users": ["../../packages/types/src/admin-users/index.ts"],
       "@otbt/types/products": ["../../packages/types/src/products/index.ts"],
       "@otbt/ui": ["../../packages/ui/src/index.ts"],
-      "@otbt/ui/globals.css": ["../../packages/ui/src/styles/globals.css"]
+      "@otbt/ui/globals.css": ["../../packages/ui/src/styles/globals.css"],
+      "@otbt/web": ["../../packages/web/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts"],
