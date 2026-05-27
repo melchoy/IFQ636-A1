@@ -1,11 +1,22 @@
-import { isValidObjectId } from "mongoose";
-import type { Product, ProductCreate, ProductUpdate } from "@otbt/types";
+import { isValidObjectId, type FilterQuery } from "mongoose";
+import type {
+  Product,
+  ProductCreate,
+  ProductStatus,
+  ProductUpdate,
+  ProductVisibility,
+} from "@otbt/types";
 
 import { ProductModel, type ProductDocument } from "./product.model.js";
 
 type ProductRecord = ProductDocument & {
   _id: { toString(): string };
 };
+
+interface ProductListFilters {
+  status?: ProductStatus;
+  visibility?: ProductVisibility;
+}
 
 function serializeProduct(product: ProductRecord): Product {
   return {
@@ -23,8 +34,18 @@ function serializeProduct(product: ProductRecord): Product {
   };
 }
 
-export async function listProducts(): Promise<Product[]> {
-  const products = await ProductModel.find()
+export async function listProducts(filters: ProductListFilters = {}): Promise<Product[]> {
+  const query: FilterQuery<ProductDocument> = {};
+
+  if (filters.status) {
+    query.status = filters.status;
+  }
+
+  if (filters.visibility) {
+    query.visibility = filters.visibility;
+  }
+
+  const products = await ProductModel.find(query)
     .sort({ name: 1 })
     .lean<ProductRecord[]>()
     .exec();
