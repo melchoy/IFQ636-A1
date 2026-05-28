@@ -11,6 +11,17 @@ import {
   SheetTrigger,
 } from "@otbt/ui";
 
+type StorefrontNavItem = {
+  label: string;
+  href: string;
+};
+
+const storefrontNavItems: StorefrontNavItem[] = [
+  { label: "Collection", href: "/" },
+  { label: "Occasions", href: "#occasions" },
+  { label: "About", href: "#about" },
+];
+
 export function RootLayout() {
   return (
     <div className="min-h-svh bg-background text-foreground">
@@ -31,11 +42,15 @@ export function RootLayout() {
           </Link>
 
           <nav className="hidden items-center justify-center gap-7 text-sm text-muted-foreground md:flex">
-            <a className="font-medium text-foreground" href="#catalogue">
-              Collection
-            </a>
-            <a href="#occasions">Occasions</a>
-            <a href="#about">About</a>
+            {storefrontNavItems.map((item, index) => (
+              <a
+                className={index === 0 ? "font-medium text-foreground" : undefined}
+                href={item.href}
+                key={item.href}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
 
           <div className="flex items-center justify-end gap-2">
@@ -57,30 +72,20 @@ export function RootLayout() {
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="mt-5 flex flex-col gap-1 border-t pt-4 text-sm">
-                  <SheetClose asChild>
-                    <a
-                      className="rounded-md px-3 py-2.5 font-medium text-foreground hover:bg-muted"
-                      href="#catalogue"
-                    >
-                      Collection
-                    </a>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <a
-                      className="rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                      href="#occasions"
-                    >
-                      Occasions
-                    </a>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <a
-                      className="rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                      href="#about"
-                    >
-                      About
-                    </a>
-                  </SheetClose>
+                  {storefrontNavItems.map((item, index) => (
+                    <SheetClose asChild key={item.href}>
+                      <a
+                        className={
+                          index === 0
+                            ? "rounded-md px-3 py-2.5 font-medium text-foreground hover:bg-muted"
+                            : "rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }
+                        href={item.href}
+                      >
+                        {item.label}
+                      </a>
+                    </SheetClose>
+                  ))}
                 </nav>
               </SheetContent>
             </Sheet>
