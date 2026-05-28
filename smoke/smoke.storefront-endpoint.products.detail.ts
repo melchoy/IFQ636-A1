@@ -67,13 +67,9 @@ try {
   );
   assert.equal(typeof detailBody.product?.price, "number", "expected product price");
   assert.equal(typeof detailBody.product?.stock, "number", "expected product stock");
-  assert.equal("sku" in detailBody.product, false, "public DTO should not expose sku");
-  assert.equal("status" in detailBody.product, false, "public DTO should not expose status");
-  assert.equal(
-    "visibility" in detailBody.product,
-    false,
-    "public DTO should not expose visibility",
-  );
+  assert.equal(typeof detailBody.product?.sku, "string", "expected product sku");
+  assert.equal(detailBody.product?.status, "active", "expected active public product");
+  assert.equal(detailBody.product?.visibility, "public", "expected public product");
 
   console.log(
     JSON.stringify(

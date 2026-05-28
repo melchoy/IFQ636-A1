@@ -44,10 +44,13 @@ storefrontProductsRouter.get("/:productId", async (req, res, next) => {
       product: {
         id: product.id,
         name: product.name,
+        sku: product.sku,
         description: product.description,
         imageUrl: product.imageUrl,
         price: product.price,
         stock: product.stock,
+        status: product.status,
+        visibility: product.visibility,
       },
     };
 

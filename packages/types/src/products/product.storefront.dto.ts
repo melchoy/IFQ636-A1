@@ -11,7 +11,15 @@ export interface ProductListResponse {
 
 export type ProductDetail = Pick<
   Product,
-  "id" | "name" | "description" | "imageUrl" | "price" | "stock"
+  | "id"
+  | "name"
+  | "sku"
+  | "description"
+  | "imageUrl"
+  | "price"
+  | "stock"
+  | "status"
+  | "visibility"
 >;
 
 export interface ProductDetailResponse {
