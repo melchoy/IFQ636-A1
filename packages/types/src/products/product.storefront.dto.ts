@@ -8,3 +8,12 @@ export type ProductListItem = Pick<
 export interface ProductListResponse {
   products: ProductListItem[];
 }
+
+export type ProductDetail = Pick<
+  Product,
+  "id" | "name" | "description" | "imageUrl" | "price" | "stock"
+>;
+
+export interface ProductDetailResponse {
+  product: ProductDetail;
+}
