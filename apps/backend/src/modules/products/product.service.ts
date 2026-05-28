@@ -13,9 +13,22 @@ type ProductRecord = ProductDocument & {
   _id: { toString(): string };
 };
 
-interface ProductListFilters {
+interface ProductQueryConstraints {
   status?: ProductStatus;
   visibility?: ProductVisibility;
+}
+
+function applyProductQueryConstraints(
+  query: FilterQuery<ProductDocument>,
+  constraints: ProductQueryConstraints,
+) {
+  if (constraints.status) {
+    query.status = constraints.status;
+  }
+
+  if (constraints.visibility) {
+    query.visibility = constraints.visibility;
+  }
 }
 
 function serializeProduct(product: ProductRecord): Product {
@@ -34,16 +47,12 @@ function serializeProduct(product: ProductRecord): Product {
   };
 }
 
-export async function listProducts(filters: ProductListFilters = {}): Promise<Product[]> {
+export async function listProducts(
+  filters: ProductQueryConstraints = {},
+): Promise<Product[]> {
   const query: FilterQuery<ProductDocument> = {};
 
-  if (filters.status) {
-    query.status = filters.status;
-  }
-
-  if (filters.visibility) {
-    query.visibility = filters.visibility;
-  }
+  applyProductQueryConstraints(query, filters);
 
   const products = await ProductModel.find(query)
     .sort({ name: 1 })
@@ -59,12 +68,19 @@ export async function createProduct(product: ProductCreate): Promise<Product> {
   return serializeProduct(createdProduct);
 }
 
-export async function getProduct(productId: string): Promise<Product | null> {
+export async function getProduct(
+  productId: string,
+  constraints: ProductQueryConstraints = {},
+): Promise<Product | null> {
   if (!isValidObjectId(productId)) {
     return null;
   }
 
-  const product = await ProductModel.findById(productId).lean<ProductRecord>().exec();
+  const query: FilterQuery<ProductDocument> = { _id: productId };
+
+  applyProductQueryConstraints(query, constraints);
+
+  const product = await ProductModel.findOne(query).lean<ProductRecord>().exec();
 
   return product ? serializeProduct(product) : null;
 }
