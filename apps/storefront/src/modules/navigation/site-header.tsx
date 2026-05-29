@@ -87,7 +87,7 @@ function SignOutButton({
 }) {
   return (
     <Button
-      className={variant === "outline" ? "w-full justify-start" : undefined}
+      className="w-full justify-start"
       disabled={disabled}
       onClick={onSignOut}
       variant={variant}
@@ -180,7 +180,7 @@ export function SiteHeader() {
                 </Button>
 
                 {isAccountMenuOpen ? (
-                  <div className="absolute right-0 top-11 z-10 w-56 rounded-lg border bg-background py-2 shadow-md">
+                  <div className="absolute right-0 top-11 z-10 w-56 overflow-hidden rounded-lg border bg-background pt-2 shadow-md">
                     <div className="px-4 py-2">
                       <CustomerIdentity customer={customer} />
                     </div>
