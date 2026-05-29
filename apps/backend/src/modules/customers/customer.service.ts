@@ -1,4 +1,4 @@
-import type { Customer } from "@otbt/types";
+import type { Customer, CustomerUpdate } from "@otbt/types";
 
 import { HttpError } from "../../middleware/error-handler.js";
 import { CustomerModel, type CustomerDocument } from "./customer.model.js";
@@ -24,6 +24,8 @@ function serializeCustomer(customer: CustomerRecord): Customer {
     firstName: customer.firstName,
     lastName: customer.lastName,
     email: customer.email,
+    status: customer.status,
+    accessLevel: customer.accessLevel,
     createdAt: customer.createdAt.toISOString(),
     updatedAt: customer.updatedAt.toISOString(),
   };
@@ -68,6 +70,52 @@ export async function findCustomerById(
   customerId: string,
 ): Promise<Customer | null> {
   const customer = await CustomerModel.findById(customerId).exec();
+
+  return customer ? serializeCustomer(customer) : null;
+}
+
+export async function listCustomers(): Promise<Customer[]> {
+  const customers = await CustomerModel.find().sort({ createdAt: -1 }).exec();
+
+  return customers.map(serializeCustomer);
+}
+
+export async function getCustomer(customerId: string): Promise<Customer | null> {
+  const customer = await CustomerModel.findById(customerId).exec();
+
+  return customer ? serializeCustomer(customer) : null;
+}
+
+export async function updateCustomer(
+  customerId: string,
+  customerUpdate: CustomerUpdate,
+): Promise<Customer | null> {
+  const update: CustomerUpdate = {};
+
+  if (customerUpdate.firstName !== undefined) {
+    update.firstName = customerUpdate.firstName.trim();
+  }
+
+  if (customerUpdate.lastName !== undefined) {
+    update.lastName = customerUpdate.lastName.trim();
+  }
+
+  if (customerUpdate.email !== undefined) {
+    update.email = customerUpdate.email.trim().toLowerCase();
+  }
+
+  if (customerUpdate.status !== undefined) {
+    update.status = customerUpdate.status;
+  }
+
+  if (customerUpdate.accessLevel !== undefined) {
+    update.accessLevel = customerUpdate.accessLevel;
+  }
+
+  const customer = await CustomerModel.findByIdAndUpdate(customerId, update, {
+    new: true,
+    runValidators: true,
+  }).exec();
 
   return customer ? serializeCustomer(customer) : null;
 }
