@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Menu, Package2, ShoppingCart } from "lucide-react";
@@ -8,6 +8,11 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Sheet,
   SheetClose,
   SheetContent,
@@ -101,7 +106,6 @@ function SignOutButton({
 export function SiteHeader() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const hasSessionToken = Boolean(getSessionToken());
   const currentCustomerQuery = useQuery(currentCustomerQueryOptions());
   const logoutCustomerMutation = useLogoutCustomerMutation();
@@ -125,7 +129,6 @@ export function SiteHeader() {
       await logoutCustomerMutation.mutateAsync();
     } finally {
       clearSessionToken();
-      setIsAccountMenuOpen(false);
       queryClient.removeQueries({ queryKey: currentCustomerQueryKey });
       navigate("/");
     }
@@ -162,35 +165,40 @@ export function SiteHeader() {
           {customer ? (
             <>
               <CartButton />
-              <div className="relative hidden md:block">
-                <Button
-                  className="size-9 rounded-full p-0"
-                  onClick={() =>
-                    setIsAccountMenuOpen((currentOpenState) => !currentOpenState)
-                  }
-                  type="button"
-                  variant="ghost"
-                >
-                  <Avatar className="size-9">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {customerInitial}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="sr-only">Open account menu</span>
-                </Button>
-
-                {isAccountMenuOpen ? (
-                  <div className="absolute right-0 top-11 z-10 w-56 overflow-hidden rounded-lg border bg-background pt-2 shadow-md">
-                    <div className="px-4 py-2">
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      aria-label="Open account menu"
+                      className="size-9 rounded-full p-0"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <Avatar className="size-9">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          {customerInitial}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="sr-only">Open account menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 p-0">
+                    <div className="px-4 py-3">
                       <CustomerIdentity customer={customer} />
                     </div>
-                    <div className="border-t" />
-                    <SignOutButton
+                    <DropdownMenuSeparator className="m-0" />
+                    <DropdownMenuItem
+                      className="rounded-none px-4 py-2.5"
                       disabled={logoutCustomerMutation.isPending}
-                      onSignOut={handleSignOut}
-                    />
-                  </div>
-                ) : null}
+                      onSelect={() => {
+                        void handleSignOut();
+                      }}
+                    >
+                      <LogOut className="size-4" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </>
           ) : (
