@@ -60,6 +60,10 @@ export default defineConfig(({ mode }) => {
           find: "@otbt/ui",
           replacement: fileURLToPath(new URL("../../packages/ui/src/index.ts", import.meta.url)),
         },
+        {
+          find: "@otbt/web",
+          replacement: fileURLToPath(new URL("../../packages/web/src/index.ts", import.meta.url)),
+        },
       ],
     },
   };

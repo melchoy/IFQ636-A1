@@ -12,6 +12,7 @@
   "dependencies": {
     "@otbt/types": "workspace:*",
     "@otbt/ui": "workspace:*",
+    "@otbt/web": "workspace:*",
     "@tailwindcss/vite": "^4.1.0",
     "@tanstack/react-query": "^5.100.14",
     "@vitejs/plugin-react": "^5.0.0",
