@@ -2,7 +2,10 @@ import type { Customer } from "@otbt/types";
 
 import { HttpError } from "../../middleware/error-handler.js";
 import { CustomerModel, type CustomerDocument } from "./customer.model.js";
-import { hashCustomerPassword } from "./customer.passwords.js";
+import {
+  hashCustomerPassword,
+  verifyCustomerPassword,
+} from "./customer.passwords.js";
 
 type CustomerRecord = CustomerDocument & {
   _id: { toString(): string };
@@ -46,4 +49,25 @@ export async function registerCustomer(
   });
 
   return serializeCustomer(customer);
+}
+
+export async function findCustomerByCredentials(
+  email: string,
+  password: string,
+): Promise<Customer | null> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const customer = await CustomerModel.findOne({ email: normalizedEmail }).exec();
+  const validPassword = customer
+    ? await verifyCustomerPassword(password, customer.passwordHash)
+    : false;
+
+  return customer && validPassword ? serializeCustomer(customer) : null;
+}
+
+export async function findCustomerById(
+  customerId: string,
+): Promise<Customer | null> {
+  const customer = await CustomerModel.findById(customerId).exec();
+
+  return customer ? serializeCustomer(customer) : null;
 }
