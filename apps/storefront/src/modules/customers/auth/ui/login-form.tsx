@@ -1,9 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button, Input } from "@otbt/ui";
 
-import { useLoginCustomerMutation } from "../customer-auth.query";
+import {
+  currentCustomerQueryKey,
+  useLoginCustomerMutation,
+} from "../customer-auth.query";
 import { setSessionToken } from "../customer-auth.storage";
 
 type LoginFormState = {
@@ -18,6 +22,7 @@ const initialLoginFormState: LoginFormState = {
 
 export function LoginForm() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const loginCustomerMutation = useLoginCustomerMutation();
   const [formState, setFormState] = useState(initialLoginFormState);
 
@@ -34,6 +39,9 @@ export function LoginForm() {
     try {
       const response = await loginCustomerMutation.mutateAsync(formState);
       setSessionToken(response.token);
+      queryClient.setQueryData(currentCustomerQueryKey, {
+        customer: response.customer,
+      });
       navigate("/");
     } catch {
     }

@@ -1,4 +1,5 @@
-import { Link, useLoaderData, useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
+import { Link } from "@otbt/web";
 
 import type { AdminProductUpdateRequest as ProductUpdateRequest } from "@otbt/types";
 import {
@@ -78,7 +79,9 @@ export function CatalogueEditPage() {
 
         <div className="flex shrink-0 items-center gap-2">
           <Button asChild variant="outline">
-            <Link to="/">Cancel</Link>
+            <Link to="/" unstyled>
+              Cancel
+            </Link>
           </Button>
           <Button
             disabled={updateProduct.isPending}

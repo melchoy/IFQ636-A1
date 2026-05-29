@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { queryOptions, useMutation } from "@tanstack/react-query";
 
 import type {
   CurrentCustomerResponse,
@@ -8,6 +8,8 @@ import type {
 
 import { storefrontRequest } from "../../../lib/http.client";
 import { getSessionToken } from "./customer-auth.storage";
+
+export const currentCustomerQueryKey = ["current-customer"];
 
 function loginCustomer(data: LoginCustomerDto) {
   return storefrontRequest<LoginCustomerResponse>("/auth/login", {
@@ -33,8 +35,23 @@ export function logoutCustomer() {
   });
 }
 
+export function currentCustomerQueryOptions() {
+  return queryOptions({
+    queryKey: currentCustomerQueryKey,
+    queryFn: getCurrentCustomer,
+    enabled: Boolean(getSessionToken()),
+    retry: false,
+  });
+}
+
 export function useLoginCustomerMutation() {
   return useMutation({
     mutationFn: loginCustomer,
+  });
+}
+
+export function useLogoutCustomerMutation() {
+  return useMutation({
+    mutationFn: logoutCustomer,
   });
 }

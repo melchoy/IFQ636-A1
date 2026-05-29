@@ -1,4 +1,5 @@
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
+import { Link } from "@otbt/web";
 
 import type { ProductCreate } from "@otbt/types";
 import {
@@ -64,7 +65,9 @@ export function CatalogueCreatePage() {
 
         <div className="flex shrink-0 items-center gap-2">
           <Button asChild variant="outline">
-            <Link to="/">Cancel</Link>
+            <Link to="/" unstyled>
+              Cancel
+            </Link>
           </Button>
           <Button
             disabled={createProduct.isPending}

@@ -2,6 +2,14 @@ import { createBrowserRouter } from "react-router";
 
 import { queryClient } from "../lib/query-client";
 import {
+  currentCustomerQueryKey,
+  currentCustomerQueryOptions,
+} from "../modules/customers/auth/customer-auth.query";
+import {
+  clearSessionToken,
+  getSessionToken,
+} from "../modules/customers/auth/customer-auth.storage";
+import {
   publicProductQueryOptions,
   publicProductsQueryOptions,
 } from "../modules/products/products.query";
@@ -12,10 +20,25 @@ import { RegisterPage } from "./routes/register/register.page";
 import { RootLayout } from "./routes/root.layout";
 import { RouteError } from "./routes/route-error";
 
+async function loadCurrentCustomerSession() {
+  if (!getSessionToken()) {
+    return null;
+  }
+
+  try {
+    return await queryClient.ensureQueryData(currentCustomerQueryOptions());
+  } catch {
+    clearSessionToken();
+    queryClient.removeQueries({ queryKey: currentCustomerQueryKey });
+    return null;
+  }
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    loader: loadCurrentCustomerSession,
     children: [
       {
         index: true,
