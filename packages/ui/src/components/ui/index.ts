@@ -3,6 +3,7 @@ export * from "./badge";
 export * from "./breadcrumb";
 export * from "./button";
 export * from "./card";
+export * from "./dropdown-menu";
 export * from "./input";
 export * from "./link";
 export * from "./separator";
