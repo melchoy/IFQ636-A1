@@ -6,6 +6,7 @@ import {
   publicProductsQueryOptions,
 } from "../modules/products/products.query";
 import { HomePage } from "./routes/home/home.page";
+import { LoginPage } from "./routes/login/login.page";
 import { ProductDetailPage } from "./routes/products/product-detail.page";
 import { RegisterPage } from "./routes/register/register.page";
 import { RootLayout } from "./routes/root.layout";
@@ -20,6 +21,11 @@ export const router = createBrowserRouter([
         index: true,
         loader: () => queryClient.ensureQueryData(publicProductsQueryOptions()),
         element: <HomePage />,
+        errorElement: <RouteError />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
         errorElement: <RouteError />,
       },
       {

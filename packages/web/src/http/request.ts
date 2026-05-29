@@ -19,6 +19,10 @@ export async function jsonRequest<TResponse>(
     throw new Error(body?.error ?? "Request failed");
   }
 
+  if (response.status === 204) {
+    return undefined as TResponse;
+  }
+
   return response.json() as Promise<TResponse>;
 }
 
