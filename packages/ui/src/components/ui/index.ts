@@ -4,6 +4,7 @@ export * from "./breadcrumb";
 export * from "./button";
 export * from "./card";
 export * from "./input";
+export * from "./link";
 export * from "./separator";
 export * from "./sheet";
 export * from "./sidebar";

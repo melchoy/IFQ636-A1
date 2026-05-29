@@ -230,10 +230,22 @@ importers:
 
   packages/web:
     dependencies:
+      '@otbt/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@tanstack/react-query':
         specifier: ^5.100.14
         version: 5.100.14(react@19.2.6)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.6
+      react-router:
+        specifier: ^7.15.0
+        version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
     devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
