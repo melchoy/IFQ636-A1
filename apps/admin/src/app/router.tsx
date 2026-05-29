@@ -1,11 +1,14 @@
 import { createBrowserRouter } from "react-router";
 
 import { RequireAdmin, requireAdminSession } from "../modules/auth";
+import { customerEditLoader, customerListLoader } from "../modules/customers";
 import { productEditLoader, productListLoader } from "../modules/products";
 import { AdminLayout } from "./routes/admin.layout";
 import { CatalogueCreatePage } from "./routes/catalog/create.page";
 import { CatalogueEditPage } from "./routes/catalog/edit.page";
 import { CatalogueListPage } from "./routes/catalog/list.page";
+import { CustomerEditPage } from "./routes/customers/edit.page";
+import { CustomerListPage } from "./routes/customers/list.page";
 import { LoginPage } from "./routes/login/login.page";
 import { PublicLayout } from "./routes/public.layout";
 import { RootLayout } from "./routes/root.layout";
@@ -44,6 +47,16 @@ export const router = createBrowserRouter(
                   path: "products/:productId",
                   loader: productEditLoader,
                   element: <CatalogueEditPage />,
+                },
+                {
+                  path: "customers",
+                  loader: customerListLoader,
+                  element: <CustomerListPage />,
+                },
+                {
+                  path: "customers/:customerId",
+                  loader: customerEditLoader,
+                  element: <CustomerEditPage />,
                 },
               ],
             },
