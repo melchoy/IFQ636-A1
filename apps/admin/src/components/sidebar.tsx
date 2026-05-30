@@ -11,11 +11,11 @@ import {
 	cn,
 	useSidebar,
 } from "@otbt/ui";
-import { Package, Plus, Settings, type LucideIcon } from "lucide-react";
+import { Package, Plus, Settings, Users, type LucideIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 type NavItem = {
-	key: "products" | "add-product";
+	key: "products" | "add-product" | "customers";
 	label: string;
 	href: string;
 	icon: LucideIcon;
@@ -24,6 +24,7 @@ type NavItem = {
 const navItems: NavItem[] = [
 	{ key: "products", label: "Products", href: "/", icon: Package },
 	{ key: "add-product", label: "Add Product", href: "/products/new", icon: Plus },
+	{ key: "customers", label: "Customers", href: "/customers", icon: Users },
 ];
 
 export function AdminSidebar() {
@@ -41,13 +42,16 @@ export function AdminSidebar() {
 				<SidebarContent className="gap-0 p-4">
 					<SidebarGroup className="p-0">
 						<SidebarGroupLabel className="h-auto px-2 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/80">
-							Catalog
+							Storefront
 						</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu className="gap-1">
 								{navItems.map((item) => {
 									const Icon = item.icon;
-									const isActive = item.key === "products" ? pathname === "/" : pathname === item.href;
+									const isActive =
+										item.key === "products"
+											? pathname === "/"
+											: pathname === item.href || pathname.startsWith(`${item.href}/`);
 
 									return (
 										<SidebarMenuItem key={item.key}>
