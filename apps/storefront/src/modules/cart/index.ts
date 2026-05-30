@@ -4,6 +4,7 @@ export type {
   CartProductSnapshot,
   CartSummary,
 } from "./cart.types";
+export { useCart } from "./cart.hooks";
 export {
   addCartItem,
   clearCartItems,

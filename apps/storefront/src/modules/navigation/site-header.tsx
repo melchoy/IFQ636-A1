@@ -30,6 +30,7 @@ import {
   clearSessionToken,
   getSessionToken,
 } from "../customers/auth/customer-auth.storage";
+import { useCart } from "../cart";
 
 type StorefrontNavItem = {
   label: string;
@@ -73,10 +74,19 @@ function CustomerIdentity({
 }
 
 function CartButton() {
+  const cart = useCart();
+
   return (
-    <Button size="icon" variant="ghost">
-      <ShoppingCart className="size-4" />
-      <span className="sr-only">Cart</span>
+    <Button asChild className="relative" size="icon" variant="ghost">
+      <Link to="/cart" unstyled>
+        <ShoppingCart className="size-4" />
+        <span className="sr-only">Cart</span>
+        {cart.itemCount > 0 ? (
+          <span className="absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-4 text-primary-foreground">
+            {cart.itemCount}
+          </span>
+        ) : null}
+      </Link>
     </Button>
   );
 }
