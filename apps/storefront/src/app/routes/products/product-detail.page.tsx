@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 
-import { ProductDetail } from "../../../modules/products/product-detail";
+import { ProductDetail } from "../../../modules/products/ui/product-detail";
 import { usePublicProductQuery } from "../../../modules/products/products.query";
 
 export function ProductDetailPage() {

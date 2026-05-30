@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
-import { ProductCard } from "../../../modules/products/product-card";
+import { ProductCard } from "../../../modules/products/ui/product-card";
 import { usePublicProductsQuery } from "../../../modules/products/products.query";
 
 const PRODUCT_PAGE_SIZE = 12;
