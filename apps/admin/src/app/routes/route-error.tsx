@@ -1,5 +1,7 @@
+import { isRouteErrorResponse, useRouteError } from "react-router";
+
 import { Button } from "@otbt/ui";
-import { isRouteErrorResponse, Link, useRouteError } from "react-router";
+import { Link } from "@otbt/web";
 
 function getErrorMessage(error: unknown) {
   if (isRouteErrorResponse(error)) {
@@ -22,7 +24,9 @@ export function RouteError() {
         <h1 className="text-xl font-semibold text-foreground">Unable to load this page</h1>
         <p className="mt-2 text-sm text-muted-foreground">{getErrorMessage(error)}</p>
         <Button asChild className="mt-6" variant="outline">
-          <Link to="/">Return to admin</Link>
+          <Link to="/" unstyled>
+            Return to admin
+          </Link>
         </Button>
       </section>
     </main>

@@ -1,0 +1,281 @@
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LogOut, Menu, Package2, ShoppingCart } from "lucide-react";
+
+import { Link } from "@otbt/web";
+import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@otbt/ui";
+
+import {
+  currentCustomerQueryKey,
+  currentCustomerQueryOptions,
+  useLogoutCustomerMutation,
+} from "../customers/auth/customer-auth.query";
+import {
+  clearSessionToken,
+  getSessionToken,
+} from "../customers/auth/customer-auth.storage";
+
+type StorefrontNavItem = {
+  label: string;
+  href: string;
+};
+
+type StorefrontActionLink = {
+  label: string;
+  href: string;
+  variant: "ghost" | "outline" | "default";
+};
+
+const storefrontNavItems: StorefrontNavItem[] = [
+  { label: "Collection", href: "/" },
+  { label: "Occasions", href: "#occasions" },
+  { label: "About", href: "#about" },
+];
+
+const storefrontAuthLinks: StorefrontActionLink[] = [
+  { label: "Sign in", href: "/login", variant: "ghost" },
+  { label: "Create account", href: "/register", variant: "default" },
+];
+
+function getCustomerInitial(firstName?: string) {
+  return firstName?.trim().charAt(0).toUpperCase() || "A";
+}
+
+function CustomerIdentity({
+  customer,
+}: {
+  customer: { firstName: string; lastName: string; email: string };
+}) {
+  return (
+    <div>
+      <p className="truncate text-sm font-medium text-foreground">
+        {customer.firstName} {customer.lastName}
+      </p>
+      <p className="truncate text-xs text-muted-foreground">{customer.email}</p>
+    </div>
+  );
+}
+
+function CartButton() {
+  return (
+    <Button size="icon" variant="ghost">
+      <ShoppingCart className="size-4" />
+      <span className="sr-only">Cart</span>
+    </Button>
+  );
+}
+
+function SignOutButton({
+  disabled,
+  onSignOut,
+  variant = "ghost",
+}: {
+  disabled: boolean;
+  onSignOut: () => void;
+  variant?: "ghost" | "outline";
+}) {
+  return (
+    <Button
+      className="w-full justify-start"
+      disabled={disabled}
+      onClick={onSignOut}
+      variant={variant}
+    >
+      <LogOut className="size-4" />
+      Sign out
+    </Button>
+  );
+}
+
+export function SiteHeader() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const hasSessionToken = Boolean(getSessionToken());
+  const currentCustomerQuery = useQuery(currentCustomerQueryOptions());
+  const logoutCustomerMutation = useLogoutCustomerMutation();
+  const customer = hasSessionToken ? currentCustomerQuery.data?.customer : null;
+  const customerInitial = useMemo(
+    () => getCustomerInitial(customer?.firstName),
+    [customer?.firstName],
+  );
+
+  useEffect(() => {
+    if (!hasSessionToken || !currentCustomerQuery.isError) {
+      return;
+    }
+
+    clearSessionToken();
+    queryClient.removeQueries({ queryKey: currentCustomerQueryKey });
+  }, [currentCustomerQuery.isError, hasSessionToken, queryClient]);
+
+  async function handleSignOut() {
+    try {
+      await logoutCustomerMutation.mutateAsync();
+    } finally {
+      clearSessionToken();
+      queryClient.removeQueries({ queryKey: currentCustomerQueryKey });
+      navigate("/");
+    }
+  }
+
+  return (
+    <header className="border-b bg-background">
+      <div className="storefront-container grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6 md:px-6">
+        <Link className="flex min-w-0 items-center gap-3" to="/">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-primary text-primary-foreground">
+            <Package2 className="size-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">
+              Order of the Black Thorn
+            </p>
+            <p className="truncate text-xs text-muted-foreground">Lorem ipsum</p>
+          </div>
+        </Link>
+
+        <nav className="hidden items-center justify-center gap-7 text-sm text-muted-foreground md:flex">
+          {storefrontNavItems.map((item, index) => (
+            <a
+              className={index === 0 ? "font-medium text-foreground" : undefined}
+              href={item.href}
+              key={item.href}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center justify-end gap-2">
+          {customer ? (
+            <>
+              <CartButton />
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      aria-label="Open account menu"
+                      className="size-9 rounded-full p-0"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <Avatar className="size-9">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          {customerInitial}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="sr-only">Open account menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 p-0">
+                    <div className="px-4 py-3">
+                      <CustomerIdentity customer={customer} />
+                    </div>
+                    <DropdownMenuSeparator className="m-0" />
+                    <DropdownMenuItem
+                      className="rounded-none px-4 py-2.5"
+                      disabled={logoutCustomerMutation.isPending}
+                      onSelect={() => {
+                        void handleSignOut();
+                      }}
+                    >
+                      <LogOut className="size-4" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="hidden items-center gap-2 md:flex">
+                {storefrontAuthLinks.map((item) => (
+                  <Button asChild key={item.href} size="sm" variant={item.variant}>
+                    <Link to={item.href} unstyled>
+                      {item.label}
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+              <CartButton />
+            </>
+          )}
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button className="md:hidden" size="icon" variant="ghost">
+                <Menu className="size-4" />
+                <span className="sr-only">Open navigation</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-72 p-5" side="right">
+              <SheetHeader className="pr-8 text-left">
+                <SheetTitle className="text-base">
+                  Order of the Black Thorn
+                </SheetTitle>
+              </SheetHeader>
+              <nav className="mt-5 flex flex-col gap-1 border-t pt-4 text-sm">
+                {storefrontNavItems.map((item, index) => (
+                  <SheetClose asChild key={item.href}>
+                    <a
+                      className={
+                        index === 0
+                          ? "rounded-md px-3 py-2.5 font-medium text-foreground hover:bg-muted"
+                          : "rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                      href={item.href}
+                    >
+                      {item.label}
+                    </a>
+                  </SheetClose>
+                ))}
+              </nav>
+
+              <div className="mt-4 border-t pt-4">
+                {customer ? (
+                  <div className="space-y-3">
+                    <CustomerIdentity customer={customer} />
+                    <SignOutButton
+                      disabled={logoutCustomerMutation.isPending}
+                      onSignOut={handleSignOut}
+                      variant="outline"
+                    />
+                  </div>
+                ) : (
+                  <div className="grid gap-2">
+                    {storefrontAuthLinks.map((item) => (
+                      <Button
+                        asChild
+                        key={item.href}
+                        variant={item.variant === "ghost" ? "outline" : item.variant}
+                      >
+                        <Link to={item.href} unstyled>
+                          {item.label}
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  );
+}

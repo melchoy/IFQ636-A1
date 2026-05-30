@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@otbt/ui";
+import { Link } from "@otbt/web";
 
 import { ProductCard } from "../../../modules/products/product-card";
 import { usePublicProductsQuery } from "../../../modules/products/products.query";
@@ -57,7 +58,9 @@ export function HomePage() {
           </p>
           <div className="mt-5 md:mt-6">
             <Button asChild>
-              <a href="#catalogue">Browse catalogue</a>
+              <Link to="/#catalogue" unstyled>
+                Browse catalogue
+              </Link>
             </Button>
           </div>
         </div>

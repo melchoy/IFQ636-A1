@@ -1,0 +1,26 @@
+[
+  {
+    "firstName": "Example",
+    "lastName": "Customer",
+    "email": "customer@example.com",
+    "password": "password",
+    "status": "active",
+    "accessLevel": "standard"
+  },
+  {
+    "firstName": "Member",
+    "lastName": "Customer",
+    "email": "member@example.com",
+    "password": "password",
+    "status": "active",
+    "accessLevel": "member"
+  },
+  {
+    "firstName": "Example",
+    "lastName": "Customer Two",
+    "email": "customer2@example.com",
+    "password": "password",
+    "status": "disabled",
+    "accessLevel": "standard"
+  }
+]
