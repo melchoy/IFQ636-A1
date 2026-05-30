@@ -18,6 +18,7 @@ import { LoginPage } from "./routes/login/login.page";
 import { ProductDetailPage } from "./routes/products/product-detail.page";
 import { RegisterPage } from "./routes/register/register.page";
 import { RootLayout } from "./routes/root.layout";
+import { RootLoading } from "./routes/root-loading";
 import { RouteError } from "./routes/route-error";
 
 async function loadCurrentCustomerSession() {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    hydrateFallbackElement: <RootLoading />,
     loader: loadCurrentCustomerSession,
     children: [
       {

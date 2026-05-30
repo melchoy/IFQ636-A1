@@ -1,7 +1,11 @@
+import { useState } from "react";
+
 import { ImageIcon } from "lucide-react";
 import { Link } from "react-router";
 
 import type { ProductDetail as ProductDetailDto } from "@otbt/types";
+
+import { AddToCartButton } from "./add-to-cart-button";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-AU", {
@@ -11,6 +15,7 @@ function formatPrice(price: number) {
 }
 
 export function ProductDetail({ product }: { product: ProductDetailDto }) {
+  const [quantity, setQuantity] = useState(1);
   const stockLabel =
     product.stock > 0 ? `${product.stock} in stock` : "Out of stock";
   const availabilityLabel = product.stock > 0 ? "Available" : "Unavailable";
@@ -75,15 +80,22 @@ export function ProductDetail({ product }: { product: ProductDetailDto }) {
                 id="product-quantity"
                 type="number"
                 min="1"
-                defaultValue="1"
+                value={quantity}
+                onChange={(event) => {
+                  setQuantity(Number(event.currentTarget.value));
+                }}
                 className="h-11 w-20 rounded-lg border bg-background px-3 text-center text-[15px] font-semibold text-foreground"
               />
-              <button
-                type="button"
-                className="h-11 min-w-40 rounded-lg bg-primary px-8 text-sm font-semibold text-primary-foreground"
-              >
-                Add to cart
-              </button>
+              <AddToCartButton
+                className="min-w-40 px-8"
+                product={{
+                  productId: product.id,
+                  name: product.name,
+                  price: product.price,
+                  imageUrl: product.imageUrl ?? null,
+                }}
+                quantity={quantity}
+              />
             </div>
           </div>
         </section>
