@@ -2,6 +2,7 @@ import type {
   Order,
   OrderCustomerSnapshot,
   OrderDeliveryAddress,
+  OrderStatus,
 } from "./order.entity.js";
 
 export interface CheckoutLineItemRequest {
@@ -17,4 +18,18 @@ export interface CheckoutRequest {
 
 export interface CheckoutResponse {
   order: Order;
+}
+
+export interface OrderHistoryItem {
+  id: string;
+  reference: string;
+  createdAt: string;
+  updatedAt: string;
+  status: OrderStatus;
+  total: number;
+  itemCount: number;
+}
+
+export interface OrderHistoryResponse {
+  orders: OrderHistoryItem[];
 }

@@ -1,6 +1,12 @@
 import { isValidObjectId } from "mongoose";
 
-import type { CheckoutRequest, Order, OrderCreate, OrderItem } from "@otbt/types";
+import type {
+  CheckoutRequest,
+  Order,
+  OrderCreate,
+  OrderHistoryItem,
+  OrderItem,
+} from "@otbt/types";
 
 import { ProductModel } from "../products/product.model.js";
 import { OrderModel, type OrderDocument } from "./order.model.js";
@@ -27,6 +33,20 @@ function serializeOrder(order: OrderRecord): Order {
     status: order.status,
     subtotal: order.subtotal,
     total: order.total,
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: order.updatedAt.toISOString(),
+  };
+}
+
+function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
+  const id = order._id.toString();
+
+  return {
+    id,
+    reference: id,
+    status: order.status,
+    total: order.total,
+    itemCount: order.items.reduce((total, item) => total + item.quantity, 0),
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
   };
@@ -116,4 +136,18 @@ export async function createCheckoutOrder(
   const createdOrder = await OrderModel.create(order);
 
   return serializeOrder(createdOrder as OrderRecord);
+}
+
+export async function listOrdersForCustomer(
+  customerId: string,
+): Promise<OrderHistoryItem[]> {
+  if (!customerId.trim()) {
+    return [];
+  }
+
+  const orders = await OrderModel.find({ "customer.customerId": customerId })
+    .sort({ createdAt: -1 })
+    .exec();
+
+  return orders.map((order) => serializeOrderHistoryItem(order as OrderRecord));
 }

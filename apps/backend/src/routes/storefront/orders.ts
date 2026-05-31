@@ -1,10 +1,18 @@
-import type { CheckoutRequest, CheckoutResponse } from "@otbt/types";
+import type {
+  CheckoutRequest,
+  CheckoutResponse,
+  OrderHistoryResponse,
+} from "@otbt/types";
 import { Router } from "express";
 
 import { HttpError } from "../../middleware/error-handler.js";
-import type { CustomerAuthRequest } from "../../middleware/require-customer.js";
+import {
+  requireCustomer,
+  type CustomerAuthRequest,
+} from "../../middleware/require-customer.js";
 import {
   createCheckoutOrder,
+  listOrdersForCustomer,
   OrderValidationError,
 } from "../../modules/orders/order.service.js";
 
@@ -53,6 +61,26 @@ function parseCheckoutRequest(body: unknown): CheckoutRequest {
 
   return input as CheckoutRequest;
 }
+
+storefrontOrdersRouter.get(
+  "/",
+  requireCustomer,
+  async (req: CustomerAuthRequest, res, next) => {
+    try {
+      if (!req.customer) {
+        throw new HttpError(401, "Not authorized");
+      }
+
+      const response: OrderHistoryResponse = {
+        orders: await listOrdersForCustomer(req.customer.id),
+      };
+
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 storefrontOrdersRouter.post(
   "/checkout",
