@@ -1,13 +1,12 @@
-name: ifq683-a1
+name: ${COMPOSE_PROJECT_NAME:-ifq683-a1}
 
 services:
   nginx:
     image: nginx:1.27-alpine
-    container_name: nginx
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
       - "${NGINX_PORT:-80}:80"
     volumes:
-      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${NGINX_CONFIG_PATH:-./.docker/nginx/default.conf}:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped

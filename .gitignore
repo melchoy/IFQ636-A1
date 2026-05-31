@@ -2,6 +2,7 @@ node_modules/
 dist/
 .env
 .env.local
+.docker/nginx/default.generated.conf
 .DS_Store
 *.log
 *.tsbuildinfo
