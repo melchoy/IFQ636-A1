@@ -33,9 +33,10 @@ try {
       instructions: null,
     },
     items: [{ productId: product.id, quantity: 2 }],
-  });
+  }, null);
 
   assert.ok(order.id, "expected created order id");
+  assert.equal(order.customer.customerId, null);
   assert.equal(order.status, "pending");
   assert.equal(order.items.length, 1);
   assert.equal(order.items[0]?.productId, product.id);

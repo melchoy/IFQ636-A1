@@ -54,7 +54,6 @@ function buildCheckoutRequest(
 ): CheckoutRequest {
   return {
     customer: {
-      customerId: null,
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
       email: form.email.trim(),

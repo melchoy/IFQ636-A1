@@ -7,9 +7,10 @@ import { HttpError } from "./error-handler.js";
 
 export interface CustomerAuthRequest extends Request {
   customer?: Customer;
+  customerAuthError?: HttpError;
 }
 
-export async function requireCustomer(
+export async function attachCustomerContext(
   req: CustomerAuthRequest,
   _res: Response,
   next: NextFunction,
@@ -17,7 +18,7 @@ export async function requireCustomer(
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
-    next(new HttpError(401, "Not authorized"));
+    next();
     return;
   }
 
@@ -27,13 +28,28 @@ export async function requireCustomer(
     const customer = await findCustomerById(payload.id);
 
     if (!customer) {
-      next(new HttpError(401, "Not authorized"));
+      req.customerAuthError = new HttpError(401, "Not authorized");
+      next();
       return;
     }
 
     req.customer = customer;
     next();
   } catch {
-    next(new HttpError(401, "Not authorized"));
+    req.customerAuthError = new HttpError(401, "Not authorized");
+    next();
   }
+}
+
+export function requireCustomer(
+  req: CustomerAuthRequest,
+  _res: Response,
+  next: NextFunction,
+) {
+  if (!req.customer) {
+    next(req.customerAuthError ?? new HttpError(401, "Not authorized"));
+    return;
+  }
+
+  next();
 }

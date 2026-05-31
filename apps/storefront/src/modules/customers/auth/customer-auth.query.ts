@@ -19,19 +19,12 @@ function loginCustomer(data: LoginCustomerDto) {
 }
 
 export function getCurrentCustomer() {
-  const token = getSessionToken();
-
-  return storefrontRequest<CurrentCustomerResponse>("/auth/me", {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
+  return storefrontRequest<CurrentCustomerResponse>("/auth/me");
 }
 
 export function logoutCustomer() {
-  const token = getSessionToken();
-
   return storefrontRequest<void>("/auth/logout", {
     method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
 }
 
