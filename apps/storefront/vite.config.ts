@@ -10,21 +10,28 @@ const parseList = (value: string | undefined) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const readPort = (value: string | undefined, fallback: number) => {
+  const port = Number(value);
+  return Number.isInteger(port) && port > 0 ? port : fallback;
+};
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, fileURLToPath(new URL("../../", import.meta.url)), "");
+  const env = { ...loadEnv(mode, fileURLToPath(new URL("../../", import.meta.url)), ""), ...process.env };
+  const backendTarget = `http://localhost:${readPort(env.BACKEND_PORT, 5102)}`;
 
   return {
     plugins: [react(), tailwindcss()],
     server: {
       host: "localhost",
+      port: readPort(env.STOREFRONT_PORT, 5173),
       allowedHosts: parseList(env.VITE_ALLOWED_HOSTS),
       proxy: {
         "/api": {
-          target: "http://localhost:5102",
+          target: backendTarget,
           changeOrigin: true,
         },
         "/uploads": {
-          target: "http://localhost:5102",
+          target: backendTarget,
           changeOrigin: true,
         },
       },
