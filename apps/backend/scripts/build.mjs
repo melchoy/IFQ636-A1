@@ -10,6 +10,7 @@ const external = [
   "jsonwebtoken",
   "mongoose",
   "multer",
+  "nodemailer",
 ];
 
 await rm("dist", { force: true, recursive: true });
