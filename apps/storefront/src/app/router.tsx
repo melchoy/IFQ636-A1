@@ -17,6 +17,7 @@ import { CartPage } from "./routes/cart/cart.page";
 import { CheckoutPage } from "./routes/checkout/checkout.page";
 import { HomePage } from "./routes/home/home.page";
 import { LoginPage } from "./routes/login/login.page";
+import { OrderHistoryPage } from "./routes/orders/order-history.page";
 import { ProductDetailPage } from "./routes/products/product-detail.page";
 import { RegisterPage } from "./routes/register/register.page";
 import { RootLayout } from "./routes/root.layout";
@@ -58,6 +59,11 @@ export const router = createBrowserRouter([
       {
         path: "checkout",
         element: <CheckoutPage />,
+        errorElement: <RouteError />,
+      },
+      {
+        path: "orders",
+        element: <OrderHistoryPage />,
         errorElement: <RouteError />,
       },
       {
