@@ -14,6 +14,7 @@ import {
   publicProductsQueryOptions,
 } from "../modules/products/products.query";
 import { CartPage } from "./routes/cart/cart.page";
+import { CheckoutPage } from "./routes/checkout/checkout.page";
 import { HomePage } from "./routes/home/home.page";
 import { LoginPage } from "./routes/login/login.page";
 import { ProductDetailPage } from "./routes/products/product-detail.page";
@@ -52,6 +53,11 @@ export const router = createBrowserRouter([
       {
         path: "cart",
         element: <CartPage />,
+        errorElement: <RouteError />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
         errorElement: <RouteError />,
       },
       {
