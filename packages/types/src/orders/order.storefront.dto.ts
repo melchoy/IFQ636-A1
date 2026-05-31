@@ -10,9 +10,7 @@ export interface CheckoutLineItemRequest {
 }
 
 export interface CheckoutRequest {
-  customer: Omit<OrderCustomerSnapshot, "customerId"> & {
-    customerId?: string | null;
-  };
+  customer: Omit<OrderCustomerSnapshot, "customerId">;
   deliveryAddress: OrderDeliveryAddress;
   items: CheckoutLineItemRequest[];
 }

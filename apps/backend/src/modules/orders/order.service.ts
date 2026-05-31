@@ -93,13 +93,14 @@ async function buildOrderItems(
 
 export async function createCheckoutOrder(
   input: CheckoutRequest,
+  customerId: string | null,
 ): Promise<Order> {
   const items = await buildOrderItems(input.items);
   const subtotal = items.reduce((total, item) => total + item.lineTotal, 0);
 
   const order: OrderCreate = {
     customer: {
-      customerId: input.customer.customerId ?? null,
+      customerId,
       firstName: input.customer.firstName,
       lastName: input.customer.lastName,
       email: input.customer.email,

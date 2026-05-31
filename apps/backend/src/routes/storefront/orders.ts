@@ -2,6 +2,7 @@ import type { CheckoutRequest, CheckoutResponse } from "@otbt/types";
 import { Router } from "express";
 
 import { HttpError } from "../../middleware/error-handler.js";
+import type { CustomerAuthRequest } from "../../middleware/require-customer.js";
 import {
   createCheckoutOrder,
   OrderValidationError,
@@ -53,20 +54,26 @@ function parseCheckoutRequest(body: unknown): CheckoutRequest {
   return input as CheckoutRequest;
 }
 
-storefrontOrdersRouter.post("/checkout", async (req, res, next) => {
-  try {
-    const checkoutRequest = parseCheckoutRequest(req.body);
-    const response: CheckoutResponse = {
-      order: await createCheckoutOrder(checkoutRequest),
-    };
+storefrontOrdersRouter.post(
+  "/checkout",
+  async (req: CustomerAuthRequest, res, next) => {
+    try {
+      const checkoutRequest = parseCheckoutRequest(req.body);
+      const response: CheckoutResponse = {
+        order: await createCheckoutOrder(
+          checkoutRequest,
+          req.customer?.id ?? null,
+        ),
+      };
 
-    res.status(201).json(response);
-  } catch (error) {
-    if (error instanceof OrderValidationError) {
-      next(new HttpError(400, error.message));
-      return;
+      res.status(201).json(response);
+    } catch (error) {
+      if (error instanceof OrderValidationError) {
+        next(new HttpError(400, error.message));
+        return;
+      }
+
+      next(error);
     }
-
-    next(error);
-  }
-});
+  },
+);
