@@ -1,0 +1,73 @@
+<h1 style="margin:0 0 10px;font-size:29px;line-height:41px;font-weight:700;color:#f2ede3;">
+  {{statusHeading}}
+</h1>
+<p style="margin:0 0 22px;font-size:14px;line-height:20px;color:#b7ada3;">
+  {{statusIntro}}
+</p>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 22px;">
+  <tr>
+    <td colspan="2" height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:23px 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#d7ae3f;">
+      Current status
+    </td>
+    <td style="padding:23px 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{currentStatus}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Order reference
+    </td>
+    <td style="padding:0 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{orderReference}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Total
+    </td>
+    <td style="padding:0 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{orderTotal}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 0 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Delivery window
+    </td>
+    <td style="padding:0;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{deliveryWindow}}
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 22px;">
+  <tr>
+    <td height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td style="padding:23px 0 10px;">
+      <p style="margin:0 0 4px;font-size:15px;line-height:21px;font-weight:700;color:#f2ede3;">
+        Order items
+      </p>
+      <p style="margin:0;font-size:11px;line-height:16px;color:#a79f94;">
+        {{itemCount}} items in this order.
+      </p>
+    </td>
+  </tr>
+  {{orderItemsHtml}}
+</table>
+
+{{statusProgressHtml}}
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+  <tr>
+    <td align="center">
+      <a href="{{orderLink}}" style="display:inline-block;width:152px;padding:12px 22px;border-radius:6px;background-color:#d7ae3f;color:#0b080d;font-size:13px;line-height:18px;font-weight:700;text-align:center;text-decoration:none;">
+        View order status
+      </a>
+    </td>
+  </tr>
+</table>
