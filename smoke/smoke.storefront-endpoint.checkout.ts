@@ -9,9 +9,12 @@ import {
 } from "../apps/backend/src/db/connect.js";
 import { listProducts } from "../apps/backend/src/modules/products/product.service.js";
 
-const apiBaseUrl = "http://otbtstore.localhost/api/storefront";
 const customerEmail = "customer@example.com";
 const customerPassword = "password";
+const smokeOrigin =
+  process.env.STOREFRONT_SMOKE_ORIGIN ??
+  `http://localhost:${process.env.NGINX_PORT ?? 80}`;
+const apiBaseUrl = `${smokeOrigin}/api/storefront`;
 
 await connectDatabase(env.mongodbUri);
 

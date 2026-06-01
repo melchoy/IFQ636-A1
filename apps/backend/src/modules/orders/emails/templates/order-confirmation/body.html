@@ -1,0 +1,112 @@
+<h1 style="margin:0 0 10px;font-size:29px;line-height:41px;font-weight:700;color:#f2ede3;">
+  Your order has been received.
+</h1>
+<p style="margin:0 0 22px;font-size:14px;line-height:20px;color:#b7ada3;">
+  Thanks {{customerFirstName}}, we have saved the order details and will prepare the selected pieces for fulfilment.
+</p>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 22px;">
+  <tr>
+    <td colspan="2" height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:23px 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#d7ae3f;">
+      Order reference
+    </td>
+    <td style="padding:23px 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{orderReference}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Total
+    </td>
+    <td style="padding:0 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{orderTotal}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 10px 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Delivery window
+    </td>
+    <td style="padding:0 0 10px;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{deliveryWindow}}
+    </td>
+  </tr>
+  <tr>
+    <td width="170" style="width:170px;padding:0 40px 0 0;font-size:12px;line-height:17px;font-weight:700;color:#f2ede3;">
+      Delivery address
+    </td>
+    <td style="padding:0;font-size:12px;line-height:17px;color:#b7ada3;">
+      {{deliveryAddress}}
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 22px;">
+  <tr>
+    <td height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td style="padding:23px 0 10px;">
+      <p style="margin:0 0 4px;font-size:15px;line-height:21px;font-weight:700;color:#f2ede3;">
+        Order items
+      </p>
+      <p style="margin:0;font-size:11px;line-height:16px;color:#a79f94;">
+        {{itemCount}} items in this order.
+      </p>
+    </td>
+  </tr>
+  {{orderItemsHtml}}
+</table>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 20px;">
+  <tr>
+    <td height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td style="padding:20px 0 0;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#111016" style="border-collapse:separate;border-spacing:0;background-color:#111016;border:1px solid #2b2630;border-radius:8px;">
+        <tr>
+          <td style="padding:18px 18px 14px;">
+            <p style="margin:0 0 4px;font-size:16px;line-height:20px;font-weight:700;color:#f2ede3;">
+              Order status
+            </p>
+            <p style="margin:0 0 16px;font-size:12px;line-height:16px;color:#a79e94;">
+              We will email you as the order moves through fulfilment.
+            </p>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+              <tr>
+                <td align="center" width="33.33%" style="padding:0 4px;">
+                  <div style="width:14px;height:14px;margin:0 auto 7px;border-radius:999px;background-color:#d6b24c;"></div>
+                  <p style="margin:0 0 4px;font-size:11px;line-height:14px;font-weight:700;color:#d6b24c;text-align:center;">Placed</p>
+                  <p style="margin:0;font-size:10px;line-height:13px;color:#a79e94;text-align:center;">received</p>
+                </td>
+                <td align="center" width="33.33%" style="padding:0 4px;">
+                  <div style="width:14px;height:14px;margin:0 auto 7px;border-radius:999px;border:1px solid #2b2630;"></div>
+                  <p style="margin:0 0 4px;font-size:11px;line-height:14px;font-weight:700;color:#a79e94;text-align:center;">Packed</p>
+                  <p style="margin:0;font-size:10px;line-height:13px;color:#a79e94;text-align:center;">prepared</p>
+                </td>
+                <td align="center" width="33.33%" style="padding:0 4px;">
+                  <div style="width:14px;height:14px;margin:0 auto 7px;border-radius:999px;border:1px solid #2b2630;"></div>
+                  <p style="margin:0 0 4px;font-size:11px;line-height:14px;font-weight:700;color:#a79e94;text-align:center;">Shipped</p>
+                  <p style="margin:0;font-size:10px;line-height:13px;color:#a79e94;text-align:center;">in transit</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+  <tr>
+    <td align="center">
+      <a href="{{orderLink}}" style="display:inline-block;width:152px;padding:12px 22px;border-radius:6px;background-color:#d7ae3f;color:#0b080d;font-size:13px;line-height:18px;font-weight:700;text-align:center;text-decoration:none;">
+        View order
+      </a>
+    </td>
+  </tr>
+</table>

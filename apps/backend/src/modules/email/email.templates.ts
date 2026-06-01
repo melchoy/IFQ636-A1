@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import type { EmailTemplateFilePair } from "./template.registry.js";
+
 export interface RenderedEmail {
   subject: string;
   text: string;
@@ -14,6 +16,7 @@ interface TemplateFileInput {
   preheader: string;
   htmlTemplatePath: string;
   textTemplatePath: string;
+  htmlValues?: Record<string, string>;
   values?: Record<string, string>;
 }
 
@@ -58,7 +61,13 @@ export async function renderEmailFromTemplateFiles(
   const rawHtmlBody = await readFile(input.htmlTemplatePath, "utf8");
   const rawTextBody = await readFile(input.textTemplatePath, "utf8");
   const values = input.values ?? {};
-  const htmlBody = renderTemplate(rawHtmlBody, values);
+  const htmlValues = Object.fromEntries(
+    Object.entries(values).map(([key, value]) => [key, escapeHtml(value)]),
+  );
+  const htmlBody = renderTemplate(rawHtmlBody, {
+    ...htmlValues,
+    ...(input.htmlValues ?? {}),
+  });
   const text = renderTemplate(rawTextBody, values);
 
   return {
@@ -71,4 +80,16 @@ export async function renderEmailFromTemplateFiles(
       title: escapeHtml(input.subject),
     }),
   };
+}
+
+export async function renderRegisteredEmailTemplate(
+  input: Omit<TemplateFileInput, "htmlTemplatePath" | "textTemplatePath"> & {
+    template: EmailTemplateFilePair;
+  },
+): Promise<RenderedEmail> {
+  return renderEmailFromTemplateFiles({
+    ...input,
+    htmlTemplatePath: input.template.htmlTemplatePath,
+    textTemplatePath: input.template.textTemplatePath,
+  });
 }
