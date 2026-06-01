@@ -95,7 +95,7 @@ export function HomePage() {
           <div>
             <p className="text-sm text-muted-foreground">Collection</p>
             <h2 className="mt-1 text-xl font-semibold text-foreground sm:text-2xl">
-              Lorem ipsum dolor
+              Luxury arrangements with a moody elegance
             </h2>
           </div>
           <p className="text-sm text-muted-foreground">
