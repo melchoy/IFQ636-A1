@@ -15,7 +15,7 @@ export function ProductDetailPage() {
   if (isLoading) {
     return (
       <main className="storefront-container px-4 py-8 md:px-6">
-        <div className="rounded-lg border bg-background p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
           Loading product...
         </div>
       </main>
@@ -25,7 +25,7 @@ export function ProductDetailPage() {
   if (isError || !data) {
     return (
       <main className="storefront-container px-4 py-8 md:px-6">
-        <div className="rounded-lg border bg-background p-8 text-center text-sm text-destructive">
+        <div className="rounded-lg border bg-card p-8 text-center text-sm text-destructive">
           Could not load product.
         </div>
       </main>

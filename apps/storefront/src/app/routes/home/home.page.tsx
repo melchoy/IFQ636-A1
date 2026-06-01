@@ -104,15 +104,15 @@ export function HomePage() {
         </div>
 
         {isLoading ? (
-          <div className="rounded-lg border bg-background p-8 text-center text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
             Loading products...
           </div>
         ) : isError ? (
-          <div className="rounded-lg border bg-background p-8 text-center text-sm text-destructive">
+          <div className="rounded-lg border bg-card p-8 text-center text-sm text-destructive">
             Could not load products.
           </div>
         ) : products.length === 0 ? (
-          <div className="rounded-lg border bg-background p-8 text-center text-sm text-muted-foreground">
+          <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
             No public products are available.
           </div>
         ) : (

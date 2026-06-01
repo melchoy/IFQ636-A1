@@ -18,7 +18,7 @@ export function OrderDetailPage() {
   if (!hasSessionToken) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Order</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Sign in to view this order.
@@ -40,7 +40,7 @@ export function OrderDetailPage() {
   if (orderDetailQuery.isLoading) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Loading order...</p>
         </section>
       </main>
@@ -50,7 +50,7 @@ export function OrderDetailPage() {
   if (orderDetailQuery.isError || !orderDetailQuery.data) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Order</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             We could not load this order.

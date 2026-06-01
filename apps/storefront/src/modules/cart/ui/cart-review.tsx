@@ -23,7 +23,7 @@ export function CartReview() {
   if (cart.items.length === 0) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Your cart</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Your cart is empty.
@@ -43,7 +43,7 @@ export function CartReview() {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section>
           <h1 className="text-4xl font-semibold text-foreground">Your cart</h1>
-          <div className="mt-8 divide-y rounded-lg border bg-background">
+          <div className="mt-8 divide-y rounded-lg border bg-card">
             {cart.items.map((item) => (
               <article
                 className="grid gap-4 p-4 sm:grid-cols-[96px_minmax(0,1fr)_auto]"
@@ -132,7 +132,7 @@ export function CartReview() {
           </div>
         </section>
 
-        <aside className="h-fit rounded-lg border bg-background p-5">
+        <aside className="h-fit rounded-lg border bg-card p-5">
           <h2 className="text-lg font-semibold text-foreground">Summary</h2>
           <div className="mt-5 flex items-center justify-between border-t pt-4">
             <span className="text-sm text-muted-foreground">Subtotal</span>

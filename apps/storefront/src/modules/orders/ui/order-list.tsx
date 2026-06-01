@@ -71,7 +71,7 @@ function OrderRow({ order }: { order: OrderHistoryItem }) {
 export function OrderList({ orders }: { orders: OrderHistoryItem[] }) {
   if (orders.length === 0) {
     return (
-      <section className="rounded-lg border bg-background p-8 text-center">
+      <section className="rounded-lg border bg-card p-8 text-center">
         <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Orders you place through this storefront will appear here.
@@ -99,7 +99,7 @@ export function OrderList({ orders }: { orders: OrderHistoryItem[] }) {
         </p>
       </div>
 
-      <div className="mt-8 rounded-lg border bg-background px-5">
+      <div className="mt-8 rounded-lg border bg-card px-5">
         <div className="hidden border-b py-3 text-xs font-medium uppercase text-muted-foreground md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(180px,1fr)_120px_120px]">
           <span>Order</span>
           <span>Summary</span>

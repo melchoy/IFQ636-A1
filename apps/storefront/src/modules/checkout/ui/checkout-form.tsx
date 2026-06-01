@@ -119,7 +119,7 @@ export function CheckoutForm() {
   if (submittedOrder) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-background p-8 text-center">
+        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Order submitted</p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">
             Thanks, {submittedOrder.customer.firstName}
@@ -144,7 +144,7 @@ export function CheckoutForm() {
   if (cart.items.length === 0) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-background p-8 text-center">
+        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Checkout</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Your cart is empty.
