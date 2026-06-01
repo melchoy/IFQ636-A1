@@ -3,6 +3,7 @@ dist/
 .env
 .env.local
 .DS_Store
+.docker/nginx/default.generated.conf
 *.log
 *.tsbuildinfo
 apps/backend/uploads/
