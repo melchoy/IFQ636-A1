@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import type { CheckoutResponse, LoginCustomerResponse } from "@otbt/types";
+import type { CheckoutSessionResponse, LoginCustomerResponse } from "@otbt/types";
 
 import { env } from "../apps/backend/src/config/env.js";
 import {
@@ -69,28 +69,23 @@ const response = await fetch(`${apiBaseUrl}/orders/checkout`, {
   method: "POST",
 });
 
-const body = (await response.json()) as CheckoutResponse & { error?: string };
+const body = (await response.json()) as CheckoutSessionResponse & { error?: string };
 
 assert.equal(response.status, 201, JSON.stringify(body));
-assert.ok(body.order.id);
-assert.equal(body.order.customer.customerId, loginBody.customer.id);
-assert.equal(body.order.customer.email, customerEmail);
-assert.equal(body.order.items.length, 1);
-assert.equal(body.order.items[0]?.productId, product.id);
-assert.equal(body.order.items[0]?.quantity, 2);
-assert.equal(body.order.status, "pending");
+assert.ok(body.orderId);
+assert.ok(body.redirectUrl);
+assert.ok(
+  body.redirectUrl.startsWith("https://checkout.stripe.com/"),
+  body.redirectUrl,
+);
 
 console.log(
   JSON.stringify(
     {
       ok: true,
       order: {
-        id: body.order.id,
-        customerId: body.order.customer.customerId,
-        customerEmail: body.order.customer.email,
-        itemCount: body.order.items.length,
-        status: body.order.status,
-        total: body.order.total,
+        id: body.orderId,
+        redirectUrl: body.redirectUrl,
       },
       status: response.status,
     },

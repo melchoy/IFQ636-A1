@@ -1,6 +1,7 @@
 export const ORDER_STATUSES = ["pending", "confirmed", "cancelled"] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
+export type OrderPaymentStatus = "pending" | "paid" | "failed";
 
 export interface OrderCustomerSnapshot {
   customerId: string | null;
@@ -30,12 +31,22 @@ export interface OrderItem {
   lineTotal: number;
 }
 
+export interface OrderPayment {
+  provider: "stripe";
+  status: OrderPaymentStatus;
+  amount: number;
+  currency: "aud";
+  checkoutSessionId: string | null;
+  paymentIntentId: string | null;
+}
+
 export interface Order {
   id: string;
   customer: OrderCustomerSnapshot;
   deliveryAddress: OrderDeliveryAddress;
   items: OrderItem[];
   status: OrderStatus;
+  payment: OrderPayment | null;
   subtotal: number;
   total: number;
   createdAt: string;
@@ -44,7 +55,7 @@ export interface Order {
 
 export type OrderCreate = Pick<
   Order,
-  "customer" | "deliveryAddress" | "items" | "subtotal" | "total"
+  "customer" | "deliveryAddress" | "items" | "payment" | "subtotal" | "total"
 > & {
   status?: OrderStatus;
 };
