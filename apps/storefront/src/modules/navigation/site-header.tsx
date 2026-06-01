@@ -145,7 +145,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="">
+    <header className="pt-2">
       <div className="storefront-container grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6 md:px-6">
         <Link className="flex min-w-0 items-center gap-3" to="/">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-primary text-primary-foreground">

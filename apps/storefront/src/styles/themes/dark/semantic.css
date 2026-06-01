@@ -3,7 +3,7 @@
   /* shadcn contract */
   --background:             var(--bt-thorn-black);
   --foreground:             var(--bt-bone);
-  --card:                   color-mix(in oklab, var(--bt-obsidian-400) 40%, var(--bt-thorn-black));
+  --card:                   color-mix(in oklab, var(--bt-obsidian) 92%, transparent);
   --card-foreground:        var(--bt-bone);
   --popover:                var(--bt-obsidian-300);
   --popover-foreground:     var(--bt-bone);
