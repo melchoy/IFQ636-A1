@@ -51,6 +51,7 @@ try {
         ok: true,
         order: {
           id: order.id,
+          customerEmail: order.customer.email,
           status: order.status,
           itemCount: order.items.length,
           subtotal: order.subtotal,

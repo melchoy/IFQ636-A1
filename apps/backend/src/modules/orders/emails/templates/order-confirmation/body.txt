@@ -1,0 +1,21 @@
+Order of the Black Thorn
+
+Your order has been received.
+
+Thanks {{customerFirstName}}, we have saved the order details and will prepare the selected pieces for fulfilment.
+
+Order reference: {{orderReference}}
+Total: {{orderTotal}}
+Delivery window: {{deliveryWindow}}
+Delivery address: {{deliveryAddress}}
+
+Order items
+{{itemCount}} items in this order.
+{{itemSummary}}
+
+Order status: {{orderStatus}}
+We will email you as the order moves through fulfilment.
+
+View order: {{orderLink}}
+
+We will contact you if anything else is needed before fulfilment.

@@ -1,10 +1,13 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
-import type { CheckoutRequest, CheckoutResponse } from "@otbt/types";
+import { useQuery } from "@tanstack/react-query";
+
+import type { CheckoutRequest } from "@otbt/types";
 import { Button, Input } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
 import { clearCartItems, useCart } from "../../cart";
+import { currentCustomerQueryOptions } from "../../customers/auth/customer-auth.query";
 import { useCheckoutMutation } from "../checkout.query";
 
 type CheckoutFormState = {
@@ -86,9 +89,43 @@ function getErrorMessage(error: unknown) {
 export function CheckoutForm() {
   const cart = useCart();
   const checkoutMutation = useCheckoutMutation();
+  const currentCustomerQuery = useQuery(currentCustomerQueryOptions());
+  const currentCustomer = currentCustomerQuery.data?.customer;
   const [form, setForm] = useState(initialCheckoutFormState);
-  const [submittedOrder, setSubmittedOrder] =
-    useState<CheckoutResponse["order"] | null>(null);
+  const [completedOrderId] = useState(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get("payment") === "success"
+      ? searchParams.get("orderId")
+      : null;
+  });
+  const [cancelledOrderId] = useState(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get("payment") === "cancelled"
+      ? searchParams.get("orderId")
+      : null;
+  });
+
+  useEffect(() => {
+    if (completedOrderId) {
+      clearCartItems();
+    }
+  }, [completedOrderId]);
+
+  useEffect(() => {
+    if (!currentCustomer) {
+      return;
+    }
+
+    const fullName = `${currentCustomer.firstName} ${currentCustomer.lastName}`;
+
+    setForm((currentForm) => ({
+      ...currentForm,
+      email: currentForm.email || currentCustomer.email,
+      firstName: currentForm.firstName || currentCustomer.firstName,
+      lastName: currentForm.lastName || currentCustomer.lastName,
+      recipientName: currentForm.recipientName || fullName,
+    }));
+  }, [currentCustomer]);
 
   function updateField(field: keyof CheckoutFormState, value: string) {
     setForm((currentForm) => ({
@@ -109,25 +146,24 @@ export function CheckoutForm() {
         buildCheckoutRequest(form, cart),
       );
 
-      clearCartItems();
-      setSubmittedOrder(response.order);
+      window.location.assign(response.redirectUrl);
     } catch {
       // Mutation state renders the checkout error.
     }
   }
 
-  if (submittedOrder) {
+  if (completedOrderId) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
         <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
-          <p className="text-sm text-muted-foreground">Order submitted</p>
+          <p className="text-sm text-muted-foreground">Payment received</p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">
-            Thanks, {submittedOrder.customer.firstName}
+            Your order has been placed
           </h1>
           <p className="mt-4 text-sm text-muted-foreground">
             Your order reference is{" "}
             <span className="font-medium text-foreground">
-              {submittedOrder.id}
+              {completedOrderId}
             </span>
             .
           </p>
@@ -338,6 +374,11 @@ export function CheckoutForm() {
               {formatPrice(cart.subtotal)}
             </span>
           </div>
+          {cancelledOrderId ? (
+            <p className="mt-4 text-sm text-destructive">
+              Payment was cancelled. Your order was not completed.
+            </p>
+          ) : null}
           {checkoutMutation.isError ? (
             <p className="mt-4 text-sm text-destructive">
               {getErrorMessage(checkoutMutation.error)}
@@ -348,7 +389,9 @@ export function CheckoutForm() {
             disabled={checkoutMutation.isPending}
             type="submit"
           >
-            {checkoutMutation.isPending ? "Submitting..." : "Submit order"}
+            {checkoutMutation.isPending
+              ? "Preparing payment..."
+              : "Continue to payment"}
           </Button>
         </aside>
       </form>

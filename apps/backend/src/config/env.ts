@@ -56,6 +56,9 @@ export const env = {
   get adminJwtSecret() {
     return required("ADMIN_JWT_SECRET");
   },
+  get stripeSecretKey() {
+    return required("STRIPE_SECRET_KEY");
+  },
   uploadsDir: process.env.UPLOADS_DIR ?? path.resolve(process.cwd(), "uploads"),
   email: {
     enabled: booleanValue("EMAIL_ENABLED", false),
