@@ -1,0 +1,7 @@
+Order of the Black Thorn
+
+Mailtrap smoke test
+
+This message verifies backend SMTP email sending through Mailtrap.
+
+If this email appears in the sandbox inbox, SMTP delivery is configured correctly.
