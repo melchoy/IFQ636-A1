@@ -224,6 +224,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 First name
                 <Input
+                  autoComplete="given-name"
+                  name="firstName"
                   onChange={(event) =>
                     updateField("firstName", event.currentTarget.value)
                   }
@@ -234,6 +236,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 Last name
                 <Input
+                  autoComplete="family-name"
+                  name="lastName"
                   onChange={(event) =>
                     updateField("lastName", event.currentTarget.value)
                   }
@@ -244,6 +248,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground sm:col-span-2">
                 Email
                 <Input
+                  autoComplete="email"
+                  name="email"
                   onChange={(event) =>
                     updateField("email", event.currentTarget.value)
                   }
@@ -255,6 +261,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground sm:col-span-2">
                 Phone
                 <Input
+                  autoComplete="tel"
+                  name="phone"
                   onChange={(event) =>
                     updateField("phone", event.currentTarget.value)
                   }
@@ -273,6 +281,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 Recipient name
                 <Input
+                  autoComplete="shipping name"
+                  name="recipientName"
                   onChange={(event) =>
                     updateField("recipientName", event.currentTarget.value)
                   }
@@ -283,6 +293,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 Address line 1
                 <Input
+                  autoComplete="shipping address-line1"
+                  name="addressLine1"
                   onChange={(event) =>
                     updateField("addressLine1", event.currentTarget.value)
                   }
@@ -293,6 +305,8 @@ export function CheckoutForm() {
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 Address line 2
                 <Input
+                  autoComplete="shipping address-line2"
+                  name="addressLine2"
                   onChange={(event) =>
                     updateField("addressLine2", event.currentTarget.value)
                   }
@@ -303,6 +317,8 @@ export function CheckoutForm() {
                 <label className="grid gap-2 text-sm font-medium text-foreground">
                   Suburb
                   <Input
+                    autoComplete="shipping address-level2"
+                    name="suburb"
                     onChange={(event) =>
                       updateField("suburb", event.currentTarget.value)
                     }
@@ -313,6 +329,8 @@ export function CheckoutForm() {
                 <label className="grid gap-2 text-sm font-medium text-foreground">
                   State
                   <Input
+                    autoComplete="shipping address-level1"
+                    name="state"
                     onChange={(event) =>
                       updateField("state", event.currentTarget.value)
                     }
@@ -323,6 +341,8 @@ export function CheckoutForm() {
                 <label className="grid gap-2 text-sm font-medium text-foreground">
                   Postcode
                   <Input
+                    autoComplete="shipping postal-code"
+                    name="postcode"
                     onChange={(event) =>
                       updateField("postcode", event.currentTarget.value)
                     }
