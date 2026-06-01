@@ -47,21 +47,45 @@ export function HomePage() {
 
   return (
     <main className="storefront-container px-4 py-4 sm:py-5 md:px-6 lg:py-6">
-      <section className="border-b pb-6 pt-4 sm:pb-7 sm:pt-5 md:pb-9 md:pt-7">
-        <div className="max-w-3xl">
-          <h1 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground md:mt-6 md:text-lg">
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-          </p>
-          <div className="mt-5 md:mt-6">
-            <Button asChild>
-              <Link to="/#catalogue" unstyled>
-                Browse catalogue
-              </Link>
-            </Button>
+      <section className="relative overflow-hidden rounded-[10px] border border-product-image-well-border">
+        <div
+          className="absolute inset-0 bg-cover bg-right bg-no-repeat opacity-60"
+          style={{ backgroundImage: "url('/hero-background.png')" }}
+          aria-hidden="true"
+        />
+
+        <div className="relative flex min-h-[320px] items-stretch md:min-h-[408px]">
+          <div className="z-10 flex flex-1 flex-col justify-center px-6 py-8 md:max-w-[55%] md:px-8 md:py-10">
+            <h1 className="text-2xl font-bold leading-tight text-foreground sm:text-3xl md:text-[40px] md:leading-[46px]">
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry.
+            </h1>
+            <p className="mt-4 max-w-lg text-base leading-[26px] text-foreground md:mt-5">
+              Lorem Ipsum has been the industry's standard dummy text ever since
+              1966, when designers at Letraset and James Mosley, the librarian
+              at St Bride Printing Library, took a 1914 Cicero translation and
+              scrambled it to make dummy text for Letraset's Body Type sheets.
+            </p>
+            <div className="mt-6 flex gap-5 md:mt-8">
+              <Button asChild>
+                <Link to="/#catalogue" unstyled>
+                  Shop flowers
+                </Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link to="/sign-in" unstyled>
+                  Sign in
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          <div className="pointer-events-none relative hidden flex-1 items-center justify-center md:flex md:justify-end md:pr-[5%]">
+            <img
+              src="/flowers.png"
+              alt=""
+              className="relative z-10 h-full max-h-[440px] w-auto object-contain"
+            />
           </div>
         </div>
       </section>
