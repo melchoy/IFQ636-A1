@@ -100,7 +100,7 @@ export function ProductDetail({ product }: { product: ProductDetailDto }) {
           </div>
         </section>
 
-        <section className="flex aspect-square min-h-[320px] items-center justify-center rounded-xl bg-muted p-6 lg:mt-[104px] lg:size-[620px]">
+        <section className="flex aspect-square min-h-[320px] items-center justify-center rounded-xl border border-product-image-well-border bg-product-image-well p-6 lg:mt-[104px] lg:size-[620px]">
           {product.imageUrl ? (
             <img
               src={product.imageUrl}

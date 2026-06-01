@@ -46,4 +46,6 @@
   --brand-gold:         var(--bt-aged-gold);
   --success:            var(--bt-root-green-200);
   --success-foreground: var(--bt-bone);
+  --product-image-well:        color-mix(in oklab, var(--bt-obsidian-400) 60%, transparent);
+  --product-image-well-border: var(--bt-obsidian-400);
 }
