@@ -3,6 +3,9 @@ import type { ComponentProps } from "react";
 import type { Order, OrderStatus } from "@otbt/types";
 import { Badge } from "@otbt/ui";
 
+import { useUpdateOrderStatus } from "../orders.hooks";
+import { OrderStatusForm } from "./order-status-form";
+
 const currencyFormatter = new Intl.NumberFormat("en-AU", {
   currency: "AUD",
   style: "currency",
@@ -13,8 +16,8 @@ const statusConfig: Record<
   { variant: ComponentProps<typeof Badge>["variant"]; label: string }
 > = {
   pending: { variant: "secondary", label: "Pending" },
-  confirmed: { variant: "default", label: "Confirmed" },
-  cancelled: { variant: "destructive", label: "Cancelled" },
+  packed: { variant: "default", label: "Packed" },
+  shipped: { variant: "outline", label: "Shipped" },
 };
 
 function formatAddress(order: Order) {
@@ -27,6 +30,11 @@ function formatAddress(order: Order) {
 
 export function OrderDetail({ order }: { order: Order }) {
   const status = statusConfig[order.status];
+  const updateOrderStatus = useUpdateOrderStatus(order.id);
+
+  async function saveStatus(nextStatus: OrderStatus) {
+    await updateOrderStatus.mutateAsync({ status: nextStatus });
+  }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -85,6 +93,21 @@ export function OrderDetail({ order }: { order: Order }) {
       </section>
 
       <aside className="space-y-6">
+        <section className="rounded-lg border bg-background p-6 shadow-xs">
+          <h2 className="text-lg font-semibold text-foreground">Fulfilment</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Update the order status shown to customers.
+          </p>
+          <div className="mt-4">
+            <OrderStatusForm
+              defaultStatus={order.status}
+              error={updateOrderStatus.error}
+              onSubmit={saveStatus}
+              submitting={updateOrderStatus.isPending}
+            />
+          </div>
+        </section>
+
         <section className="rounded-lg border bg-background p-6 shadow-xs">
           <h2 className="text-lg font-semibold text-foreground">Customer</h2>
           <dl className="mt-4 space-y-3 text-sm">

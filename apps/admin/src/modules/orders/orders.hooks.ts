@@ -1,6 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { orderDetailQuery, orderListQuery } from "./orders.query";
+import type { AdminOrderStatusUpdateRequest } from "@otbt/types";
+
+import { queryClient } from "../../lib/query-client";
+import {
+  orderDetailQuery,
+  orderDetailQueryKey,
+  orderListQuery,
+} from "./orders.query";
+import { updateOrderStatus } from "./orders.request";
 
 export function useOrderList() {
   const { data: orderList } = useQuery(orderListQuery);
@@ -20,4 +28,15 @@ export function useOrderDetail(orderId: string) {
   }
 
   return orderDetail;
+}
+
+export function useUpdateOrderStatus(orderId: string) {
+  return useMutation({
+    mutationFn: (request: AdminOrderStatusUpdateRequest) =>
+      updateOrderStatus(orderId, request),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: orderListQuery.queryKey });
+      await queryClient.invalidateQueries({ queryKey: orderDetailQueryKey(orderId) });
+    },
+  });
 }

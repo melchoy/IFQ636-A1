@@ -1,12 +1,14 @@
 import { isValidObjectId } from "mongoose";
 
-import type {
-  AdminOrderListItem,
-  CheckoutRequest,
-  Order,
-  OrderCreate,
-  OrderHistoryItem,
-  OrderItem,
+import {
+  ORDER_STATUSES,
+  type AdminOrderListItem,
+  type CheckoutRequest,
+  type Order,
+  type OrderCreate,
+  type OrderHistoryItem,
+  type OrderItem,
+  type OrderStatus,
 } from "@otbt/types";
 
 import { sendEmail } from "../email/email.service.js";
@@ -374,6 +376,27 @@ export async function getAdminOrder(orderId: string): Promise<Order | null> {
   }
 
   const order = await OrderModel.findById(orderId).exec();
+
+  return order ? serializeOrder(order as OrderRecord) : null;
+}
+
+export async function updateAdminOrderStatus(
+  orderId: string,
+  status: OrderStatus,
+): Promise<Order | null> {
+  if (!isValidObjectId(orderId)) {
+    return null;
+  }
+
+  if (!ORDER_STATUSES.includes(status)) {
+    throw new OrderValidationError("Invalid order status");
+  }
+
+  const order = await OrderModel.findByIdAndUpdate(
+    orderId,
+    { status },
+    { new: true, runValidators: true },
+  ).exec();
 
   return order ? serializeOrder(order as OrderRecord) : null;
 }

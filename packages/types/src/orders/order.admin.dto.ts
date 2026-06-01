@@ -22,3 +22,11 @@ export interface AdminOrderListResponse {
 export interface AdminOrderDetailResponse {
   order: AdminOrderDetail;
 }
+
+export interface AdminOrderStatusUpdateRequest {
+  status: OrderStatus;
+}
+
+export interface AdminOrderStatusUpdateResponse {
+  order: Order;
+}

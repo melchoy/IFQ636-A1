@@ -13,8 +13,8 @@ const statusConfig: Record<
   { variant: ComponentProps<typeof Badge>["variant"]; label: string }
 > = {
   pending: { variant: "secondary", label: "Pending" },
-  confirmed: { variant: "default", label: "Confirmed" },
-  cancelled: { variant: "destructive", label: "Cancelled" },
+  packed: { variant: "default", label: "Packed" },
+  shipped: { variant: "outline", label: "Shipped" },
 };
 
 const currencyFormatter = new Intl.NumberFormat("en-AU", {

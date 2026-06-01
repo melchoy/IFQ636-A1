@@ -7,6 +7,7 @@ export * from "./dropdown-menu";
 export * from "./input";
 export * from "./link";
 export * from "./separator";
+export * from "./select";
 export * from "./sheet";
 export * from "./sidebar";
 export * from "./skeleton";
