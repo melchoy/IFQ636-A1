@@ -1,0 +1,10 @@
+Your account is ready.
+
+Thanks {{customerFirstName}}, your customer account has been created.
+
+Account email: {{customerEmail}}
+Account type: Customer
+Access: Checkout and order history
+Security: Contact support if this was not you
+
+Sign in: {{signInLink}}
