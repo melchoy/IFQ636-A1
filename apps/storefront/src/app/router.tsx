@@ -17,6 +17,7 @@ import { CartPage } from "./routes/cart/cart.page";
 import { CheckoutPage } from "./routes/checkout/checkout.page";
 import { HomePage } from "./routes/home/home.page";
 import { LoginPage } from "./routes/login/login.page";
+import { NotFoundPage } from "./routes/not-found.page";
 import { OrderDetailPage } from "./routes/orders/order-detail.page";
 import { OrderHistoryPage } from "./routes/orders/order-history.page";
 import { ProductDetailPage } from "./routes/products/product-detail.page";
@@ -98,7 +99,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <RouteError />,
+        element: <NotFoundPage />,
       },
     ],
   },

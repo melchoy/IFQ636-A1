@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Package2, ReceiptText, ShoppingCart } from "lucide-react";
+import { LogOut, Menu, ReceiptText, ShoppingCart } from "lucide-react";
 
 import { Link } from "@otbt/web";
 import {
@@ -34,7 +34,7 @@ import { useCart } from "../cart";
 
 type StorefrontNavItem = {
   label: string;
-  href: string;
+  to: string;
 };
 
 type StorefrontActionLink = {
@@ -44,9 +44,9 @@ type StorefrontActionLink = {
 };
 
 const storefrontNavItems: StorefrontNavItem[] = [
-  { label: "Collection", href: "/" },
-  { label: "Occasions", href: "#occasions" },
-  { label: "About", href: "#about" },
+  { label: "Collection", to: "/" },
+  { label: "Occasions", to: "/occasions" },
+  { label: "About", to: "/about" },
 ];
 
 const storefrontAuthLinks: StorefrontActionLink[] = [
@@ -54,8 +54,18 @@ const storefrontAuthLinks: StorefrontActionLink[] = [
   { label: "Create account", href: "/register", variant: "default" },
 ];
 
-function getCustomerInitial(firstName?: string) {
-  return firstName?.trim().charAt(0).toUpperCase() || "A";
+function isNavItemActive(item: StorefrontNavItem, pathname: string): boolean {
+  if (item.to === "/") {
+    return pathname === "/" || pathname.startsWith("/products/");
+  }
+
+  return pathname === item.to || pathname.startsWith(`${item.to}/`);
+}
+
+function getCustomerInitials(firstName?: string, lastName?: string) {
+  const first = firstName?.trim().charAt(0).toUpperCase() ?? "";
+  const last = lastName?.trim().charAt(0).toUpperCase() ?? "";
+  return `${first}${last}` || "A";
 }
 
 function CustomerIdentity({
@@ -114,15 +124,16 @@ function SignOutButton({
 }
 
 export function SiteHeader() {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const hasSessionToken = Boolean(getSessionToken());
   const currentCustomerQuery = useQuery(currentCustomerQueryOptions());
   const logoutCustomerMutation = useLogoutCustomerMutation();
   const customer = hasSessionToken ? currentCustomerQuery.data?.customer : null;
-  const customerInitial = useMemo(
-    () => getCustomerInitial(customer?.firstName),
-    [customer?.firstName],
+  const customerInitials = useMemo(
+    () => getCustomerInitials(customer?.firstName, customer?.lastName),
+    [customer?.firstName, customer?.lastName],
   );
 
   useEffect(() => {
@@ -147,28 +158,34 @@ export function SiteHeader() {
   return (
     <header className="pt-3">
       <div className="storefront-container grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6 md:px-6">
-        <Link className="flex min-w-0 items-center gap-3" to="/">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-primary text-primary-foreground">
-            <Package2 className="size-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">
-              Order of the Black Thorn
-            </p>
-            <p className="truncate text-xs text-muted-foreground">Lorem ipsum</p>
-          </div>
+        <Link className="flex min-w-0 flex-col gap-1" to="/">
+          <p className="truncate text-sm font-semibold uppercase tracking-wide text-foreground">
+            Order of the Black Thorn
+          </p>
+          <p className="truncate text-[13px] leading-tight text-muted-foreground">
+            Dark florals, vessels, and keepsakes.
+          </p>
         </Link>
 
-        <nav className="hidden items-center justify-center gap-7 text-sm text-muted-foreground md:flex">
-          {storefrontNavItems.map((item, index) => (
-            <a
-              className={index === 0 ? "font-medium text-foreground" : undefined}
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </a>
-          ))}
+        <nav className="hidden items-center justify-center gap-6 text-sm md:flex">
+          {storefrontNavItems.map((item) => {
+            const isActive = isNavItemActive(item, pathname);
+
+            return (
+              <Link
+                className={
+                  isActive
+                    ? "relative font-semibold text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:bg-primary"
+                    : "font-medium text-muted-foreground transition-colors hover:text-foreground"
+                }
+                key={item.to}
+                to={item.to}
+                unstyled
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center justify-end gap-2">
@@ -180,13 +197,13 @@ export function SiteHeader() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       aria-label="Open account menu"
-                      className="size-9 rounded-full p-0"
+                      className="size-8 rounded-full border border-border bg-card p-0 hover:bg-card"
                       type="button"
                       variant="ghost"
                     >
-                      <Avatar className="size-9">
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {customerInitial}
+                      <Avatar className="size-8">
+                        <AvatarFallback className="bg-card text-xs font-medium text-muted-foreground">
+                          {customerInitials}
                         </AvatarFallback>
                       </Avatar>
                       <span className="sr-only">Open account menu</span>
@@ -247,20 +264,25 @@ export function SiteHeader() {
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-5 flex flex-col gap-1 border-t pt-4 text-sm">
-                {storefrontNavItems.map((item, index) => (
-                  <SheetClose asChild key={item.href}>
-                    <a
-                      className={
-                        index === 0
-                          ? "rounded-md px-3 py-2.5 font-medium text-foreground hover:bg-muted"
-                          : "rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                      }
-                      href={item.href}
-                    >
-                      {item.label}
-                    </a>
-                  </SheetClose>
-                ))}
+                {storefrontNavItems.map((item) => {
+                  const isActive = isNavItemActive(item, pathname);
+
+                  return (
+                    <SheetClose asChild key={item.to}>
+                      <Link
+                        className={
+                          isActive
+                            ? "rounded-md px-3 py-2.5 font-medium text-foreground hover:bg-muted"
+                            : "rounded-md px-3 py-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }
+                        to={item.to}
+                        unstyled
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  );
+                })}
               </nav>
 
               <div className="mt-4 border-t pt-4">
