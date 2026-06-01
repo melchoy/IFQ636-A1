@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 
 import type {
+  AdminOrderListItem,
   CheckoutRequest,
   Order,
   OrderCreate,
@@ -62,6 +63,32 @@ function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
     itemSummary,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
+  };
+}
+
+function serializeAdminOrderListItem(order: OrderRecord): AdminOrderListItem {
+  const serializedOrder = serializeOrder(order);
+  const itemNames = serializedOrder.items.map((item) => item.name);
+  const remainingItemCount = Math.max(0, itemNames.length - 2);
+  const itemSummary =
+    remainingItemCount > 0
+      ? `${itemNames.slice(0, 2).join(", ")} +${remainingItemCount} more`
+      : itemNames.join(", ");
+
+  return {
+    id: serializedOrder.id,
+    reference: serializedOrder.id,
+    customerName: `${serializedOrder.customer.firstName} ${serializedOrder.customer.lastName}`,
+    customerEmail: serializedOrder.customer.email,
+    status: serializedOrder.status,
+    total: serializedOrder.total,
+    itemCount: serializedOrder.items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    ),
+    itemSummary,
+    createdAt: serializedOrder.createdAt,
+    updatedAt: serializedOrder.updatedAt,
   };
 }
 
@@ -331,6 +358,22 @@ export async function getOrderForCustomer(
     _id: orderId,
     "customer.customerId": customerId,
   }).exec();
+
+  return order ? serializeOrder(order as OrderRecord) : null;
+}
+
+export async function listAdminOrders(): Promise<AdminOrderListItem[]> {
+  const orders = await OrderModel.find().sort({ createdAt: -1 }).exec();
+
+  return orders.map((order) => serializeAdminOrderListItem(order as OrderRecord));
+}
+
+export async function getAdminOrder(orderId: string): Promise<Order | null> {
+  if (!isValidObjectId(orderId)) {
+    return null;
+  }
+
+  const order = await OrderModel.findById(orderId).exec();
 
   return order ? serializeOrder(order as OrderRecord) : null;
 }
