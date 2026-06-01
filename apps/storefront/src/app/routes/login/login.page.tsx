@@ -15,7 +15,7 @@ export function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-8 rounded-lg border bg-background p-5 shadow-sm sm:p-6">
+        <div className="mt-8 rounded-lg border bg-card p-5 shadow-sm sm:p-6">
           <LoginForm />
         </div>
 

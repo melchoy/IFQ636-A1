@@ -155,7 +155,7 @@ export function CheckoutForm() {
   if (completedOrderId) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-background p-8 text-center">
+        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Payment received</p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">
             Your order has been placed
@@ -180,7 +180,7 @@ export function CheckoutForm() {
   if (cart.items.length === 0) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-background p-8 text-center">
+        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Checkout</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Your cart is empty.
@@ -215,7 +215,7 @@ export function CheckoutForm() {
         className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]"
         onSubmit={handleSubmit}
       >
-        <section className="rounded-lg border bg-background p-5">
+        <section className="rounded-lg border bg-card p-5">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
               Contact details
@@ -345,7 +345,7 @@ export function CheckoutForm() {
           </div>
         </section>
 
-        <aside className="h-fit rounded-lg border bg-background p-5">
+        <aside className="h-fit rounded-lg border bg-card p-5">
           <h2 className="text-lg font-semibold text-foreground">
             Order summary
           </h2>

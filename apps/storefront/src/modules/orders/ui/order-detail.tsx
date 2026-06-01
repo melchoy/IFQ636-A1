@@ -56,7 +56,7 @@ export function OrderDetail({ order }: { order: Order }) {
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-          <section className="rounded-lg border bg-background p-5">
+          <section className="rounded-lg border bg-card p-5">
             <h2 className="text-base font-semibold text-foreground">Items</h2>
             <div className="mt-4 divide-y">
               {order.items.map((item) => (
@@ -84,7 +84,7 @@ export function OrderDetail({ order }: { order: Order }) {
           </section>
 
           <aside className="space-y-6">
-            <section className="rounded-lg border bg-background p-5">
+            <section className="rounded-lg border bg-card p-5">
               <h2 className="text-base font-semibold text-foreground">Total</h2>
               <div className="mt-4 space-y-3 text-sm">
                 <div className="flex justify-between gap-4 text-muted-foreground">
@@ -98,7 +98,7 @@ export function OrderDetail({ order }: { order: Order }) {
               </div>
             </section>
 
-            <section className="rounded-lg border bg-background p-5">
+            <section className="rounded-lg border bg-card p-5">
               <h2 className="text-base font-semibold text-foreground">
                 Delivery
               </h2>

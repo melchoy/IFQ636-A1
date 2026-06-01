@@ -25,7 +25,7 @@ export function OrderHistoryPage() {
   if (!hasSessionToken) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Sign in to view your previous storefront orders.
@@ -43,7 +43,7 @@ export function OrderHistoryPage() {
   if (orderListQuery.isLoading) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Loading orders...</p>
         </section>
       </main>
@@ -53,7 +53,7 @@ export function OrderHistoryPage() {
   if (orderListQuery.isError) {
     return (
       <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-background p-8 text-center">
+        <section className="rounded-lg border bg-card p-8 text-center">
           <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             We could not load your orders.

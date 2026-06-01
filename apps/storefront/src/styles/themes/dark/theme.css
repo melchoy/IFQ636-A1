@@ -1,0 +1,88 @@
+/* Dark theme: scales (50-950) + base colors. */
+.dark {
+  /* Thorn Black */
+  --bt-thorn-black-50:  #2b2b34;
+  --bt-thorn-black-100: #24242b;
+  --bt-thorn-black-200: #1d1d23;
+  --bt-thorn-black-300: #16161b;
+  --bt-thorn-black-400: #0f0f13;
+  --bt-thorn-black-500: #08080b;
+  --bt-thorn-black-600: #07070a;
+  --bt-thorn-black-700: #060608;
+  --bt-thorn-black-800: #050507;
+  --bt-thorn-black-900: #040406;
+  --bt-thorn-black-950: #030305;
+
+  /* Obsidian Black */
+  --bt-obsidian-50:  #2c2c35;
+  --bt-obsidian-100: #27272f;
+  --bt-obsidian-200: #222229;
+  --bt-obsidian-300: #1c1c24;
+  --bt-obsidian-400: #17171e;
+  --bt-obsidian-500: #121218;
+  --bt-obsidian-600: #0f0f15;
+  --bt-obsidian-700: #0d0d11;
+  --bt-obsidian-800: #0a0a0e;
+  --bt-obsidian-900: #08080b;
+  --bt-obsidian-950: #050507;
+
+  /* Bone */
+  --bt-bone-50:  #fefbf5;
+  --bt-bone-100: #fbf9f1;
+  --bt-bone-200: #f9f6ee;
+  --bt-bone-300: #f7f3ea;
+  --bt-bone-400: #f4f0e7;
+  --bt-bone-500: #f2ede3;
+  --bt-bone-600: #e9e2d7;
+  --bt-bone-700: #dfd8cb;
+  --bt-bone-800: #d6cdbf;
+  --bt-bone-900: #cdc2b2;
+  --bt-bone-950: #c4b7a6;
+
+  /* Crimson */
+  --bt-crimson-50:  #e0c4b5;
+  --bt-crimson-100: #cf9f95;
+  --bt-crimson-200: #be7b76;
+  --bt-crimson-300: #ad5757;
+  --bt-crimson-400: #9c3237;
+  --bt-crimson-500: #8b0e18;
+  --bt-crimson-600: #780d15;
+  --bt-crimson-700: #640b13;
+  --bt-crimson-800: #510a10;
+  --bt-crimson-900: #3e080d;
+  --bt-crimson-950: #2a070a;
+
+  /* Aged Gold */
+  --bt-aged-gold-50:  #efdda6;
+  --bt-aged-gold-100: #e7d293;
+  --bt-aged-gold-200: #dfc681;
+  --bt-aged-gold-300: #d7ba6f;
+  --bt-aged-gold-400: #d0ae5c;
+  --bt-aged-gold-500: #c8a24a;
+  --bt-aged-gold-600: #b18f3f;
+  --bt-aged-gold-700: #9b7c35;
+  --bt-aged-gold-800: #84682a;
+  --bt-aged-gold-900: #6d5520;
+  --bt-aged-gold-950: #564215;
+
+  /* Root Green */
+  --bt-root-green-50:  #728771;
+  --bt-root-green-100: #607360;
+  --bt-root-green-200: #4e5e4e;
+  --bt-root-green-300: #3c4a3d;
+  --bt-root-green-400: #2a362b;
+  --bt-root-green-500: #18221a;
+  --bt-root-green-600: #151e17;
+  --bt-root-green-700: #131a14;
+  --bt-root-green-800: #101611;
+  --bt-root-green-900: #0d130e;
+  --bt-root-green-950: #0a0f0b;
+
+  /* Base colors (named = 500) */
+  --bt-thorn-black: var(--bt-thorn-black-500);
+  --bt-obsidian:    var(--bt-obsidian-500);
+  --bt-bone:        var(--bt-bone-500);
+  --bt-crimson:     var(--bt-crimson-500);
+  --bt-aged-gold:   var(--bt-aged-gold-500);
+  --bt-root-green:  var(--bt-root-green-500);
+}

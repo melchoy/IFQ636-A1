@@ -1,0 +1,51 @@
+/* Dark theme: semantic tokens (shadcn contract + extended roles). */
+.dark {
+  /* shadcn contract */
+  --background:             var(--bt-thorn-black);
+  --foreground:             var(--bt-bone);
+  --card:                   color-mix(in oklab, var(--bt-obsidian) 92%, transparent);
+  --card-foreground:        var(--bt-bone);
+  --popover:                var(--bt-obsidian-300);
+  --popover-foreground:     var(--bt-bone);
+
+  --primary:                var(--bt-aged-gold);
+  --primary-foreground:     var(--bt-thorn-black);
+  --secondary:              var(--bt-bone);
+  --secondary-foreground:   var(--bt-thorn-black);
+  --tertiary:               var(--bt-obsidian-300);
+  --tertiary-foreground:    var(--bt-bone);
+  --accent:                 var(--bt-root-green);
+  --accent-foreground:      var(--bt-bone);
+  --destructive:            var(--bt-crimson);
+  --destructive-foreground: var(--bt-bone);
+
+  --muted:                  var(--bt-obsidian-400);
+  --muted-foreground:       #a9a093;
+  --border:                 var(--bt-obsidian-400);
+  --input:                  var(--bt-obsidian-400);
+  --ring:                   var(--bt-aged-gold);
+
+  /* sidebar */
+  --sidebar:                    var(--bt-obsidian);
+  --sidebar-foreground:         var(--bt-bone);
+  --sidebar-border:             #2b2b36;
+  --sidebar-accent:             var(--bt-obsidian-300);
+  --sidebar-accent-foreground:  var(--bt-bone);
+  --sidebar-primary:            var(--bt-aged-gold);
+  --sidebar-primary-foreground: var(--bt-thorn-black);
+  --sidebar-ring:               var(--bt-aged-gold);
+
+  /* extended (bridged in bridge.css) */
+  --surface:            var(--bt-obsidian);
+  --surface-raised:     var(--bt-obsidian-300);
+  --surface-sunken:     var(--bt-thorn-black-400);
+  --overlay:            color-mix(in oklab, var(--bt-thorn-black-950) 70%, transparent);
+  --border-subtle:      var(--bt-obsidian-400);
+  --border-strong:      var(--bt-thorn-black-50);
+  --brand-crimson:      var(--bt-crimson);
+  --brand-gold:         var(--bt-aged-gold);
+  --success:            var(--bt-root-green-200);
+  --success-foreground: var(--bt-bone);
+  --product-image-well:        color-mix(in oklab, var(--bt-obsidian-400) 60%, transparent);
+  --product-image-well-border: var(--bt-obsidian-400);
+}
