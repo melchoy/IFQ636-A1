@@ -1,0 +1,14 @@
+/* Exposes the extended semantic tokens as Tailwind utilities.
+   The shadcn contract is already bridged in @otbt/ui. Theme-agnostic. */
+@theme inline {
+  --color-surface:            var(--surface);
+  --color-surface-raised:     var(--surface-raised);
+  --color-surface-sunken:     var(--surface-sunken);
+  --color-overlay:            var(--overlay);
+  --color-border-subtle:      var(--border-subtle);
+  --color-border-strong:      var(--border-strong);
+  --color-brand-crimson:      var(--brand-crimson);
+  --color-brand-gold:         var(--brand-gold);
+  --color-success:            var(--success);
+  --color-success-foreground: var(--success-foreground);
+}

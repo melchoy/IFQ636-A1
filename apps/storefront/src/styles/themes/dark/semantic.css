@@ -1,0 +1,47 @@
+/* Dark theme: semantic tokens (shadcn contract + extended roles). */
+.dark {
+  /* shadcn contract */
+  --background:             var(--bt-thorn-black);
+  --foreground:             var(--bt-bone);
+  --card:                   var(--bt-obsidian);
+  --card-foreground:        var(--bt-bone);
+  --popover:                var(--bt-obsidian-300);
+  --popover-foreground:     var(--bt-bone);
+
+  --primary:                var(--bt-crimson);
+  --primary-foreground:     var(--bt-bone);
+  --secondary:              var(--bt-obsidian-300);
+  --secondary-foreground:   var(--bt-bone);
+  --accent:                 var(--bt-aged-gold);
+  --accent-foreground:      var(--bt-thorn-black);
+  --destructive:            var(--bt-crimson-600);
+  --destructive-foreground: var(--bt-bone);
+
+  --muted:                  var(--bt-obsidian-400);
+  --muted-foreground:       #a9a093;
+  --border:                 #2b2b36;
+  --input:                  #2b2b36;
+  --ring:                   var(--bt-aged-gold);
+
+  /* sidebar */
+  --sidebar:                    var(--bt-obsidian);
+  --sidebar-foreground:         var(--bt-bone);
+  --sidebar-border:             #2b2b36;
+  --sidebar-accent:             var(--bt-obsidian-300);
+  --sidebar-accent-foreground:  var(--bt-bone);
+  --sidebar-primary:            var(--bt-crimson);
+  --sidebar-primary-foreground: var(--bt-bone);
+  --sidebar-ring:               var(--bt-aged-gold);
+
+  /* extended (bridged in bridge.css) */
+  --surface:            var(--bt-obsidian);
+  --surface-raised:     var(--bt-obsidian-300);
+  --surface-sunken:     var(--bt-thorn-black-400);
+  --overlay:            color-mix(in oklab, var(--bt-thorn-black-950) 70%, transparent);
+  --border-subtle:      var(--bt-obsidian-400);
+  --border-strong:      var(--bt-thorn-black-50);
+  --brand-crimson:      var(--bt-crimson);
+  --brand-gold:         var(--bt-aged-gold);
+  --success:            var(--bt-root-green-200);
+  --success-foreground: var(--bt-bone);
+}

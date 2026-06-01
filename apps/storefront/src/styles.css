@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "@otbt/ui/globals.css";
+@import "./styles/themes/dark/theme.css";
+@import "./styles/themes/dark/semantic.css";
+@import "./styles/bridge.css";
 
 @source "../../../packages/ui/src";
 
