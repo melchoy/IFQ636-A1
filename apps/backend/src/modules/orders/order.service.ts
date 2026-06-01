@@ -1,11 +1,14 @@
 import { isValidObjectId } from "mongoose";
 
-import type {
-  CheckoutRequest,
-  Order,
-  OrderCreate,
-  OrderHistoryItem,
-  OrderItem,
+import {
+  ORDER_STATUSES,
+  type AdminOrderListItem,
+  type CheckoutRequest,
+  type Order,
+  type OrderCreate,
+  type OrderHistoryItem,
+  type OrderItem,
+  type OrderStatus,
 } from "@otbt/types";
 
 import { sendEmail } from "../email/email.service.js";
@@ -62,6 +65,32 @@ function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
     itemSummary,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
+  };
+}
+
+function serializeAdminOrderListItem(order: OrderRecord): AdminOrderListItem {
+  const serializedOrder = serializeOrder(order);
+  const itemNames = serializedOrder.items.map((item) => item.name);
+  const remainingItemCount = Math.max(0, itemNames.length - 2);
+  const itemSummary =
+    remainingItemCount > 0
+      ? `${itemNames.slice(0, 2).join(", ")} +${remainingItemCount} more`
+      : itemNames.join(", ");
+
+  return {
+    id: serializedOrder.id,
+    reference: serializedOrder.id,
+    customerName: `${serializedOrder.customer.firstName} ${serializedOrder.customer.lastName}`,
+    customerEmail: serializedOrder.customer.email,
+    status: serializedOrder.status,
+    total: serializedOrder.total,
+    itemCount: serializedOrder.items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    ),
+    itemSummary,
+    createdAt: serializedOrder.createdAt,
+    updatedAt: serializedOrder.updatedAt,
   };
 }
 
@@ -134,6 +163,27 @@ function formatCurrency(amount: number) {
 function formatStatus(status: Order["status"]) {
   return status.charAt(0).toUpperCase() + status.slice(1);
 }
+
+const statusEmailCopy: Record<
+  OrderStatus,
+  { heading: string; intro: string; label: string }
+> = {
+  pending: {
+    heading: "Your order is pending.",
+    intro: "Your order is waiting to be prepared by the store team.",
+    label: "Pending",
+  },
+  packed: {
+    heading: "Your order has been packed.",
+    intro: "Your selected pieces have been prepared and are ready for dispatch.",
+    label: "Packed",
+  },
+  shipped: {
+    heading: "Your order has shipped.",
+    intro: "Your order has left the store and is now in transit.",
+    label: "Shipped",
+  },
+};
 
 function formatItemSummary(order: Order) {
   return order.items
@@ -238,6 +288,68 @@ function renderOrderItemRows(order: Order) {
     .join("");
 }
 
+function renderStatusProgressHtml(order: Order) {
+  const activeStatuses: OrderStatus[] =
+    order.status === "pending"
+      ? ["pending"]
+      : order.status === "packed"
+        ? ["pending", "packed"]
+        : ["pending", "packed", "shipped"];
+
+  const steps: Array<{ status: OrderStatus; label: string; caption: string }> = [
+    { status: "pending", label: "Pending", caption: "received" },
+    { status: "packed", label: "Packed", caption: "prepared" },
+    { status: "shipped", label: "Shipped", caption: "in transit" },
+  ];
+
+  const stepCells = steps
+    .map((step) => {
+      const isActive = activeStatuses.includes(step.status);
+      const markerStyle = isActive
+        ? "background-color:#d6b24c;"
+        : "border:1px solid #2b2630;";
+      const labelColor = isActive ? "#d6b24c" : "#a79e94";
+
+      return `
+        <td align="center" width="33.33%" style="padding:0 4px;">
+          <div style="width:14px;height:14px;margin:0 auto 7px;border-radius:999px;${markerStyle}"></div>
+          <p style="margin:0 0 4px;font-size:11px;line-height:14px;font-weight:700;color:${labelColor};text-align:center;">${escapeHtml(step.label)}</p>
+          <p style="margin:0;font-size:10px;line-height:13px;color:#a79e94;text-align:center;">${escapeHtml(step.caption)}</p>
+        </td>
+      `;
+    })
+    .join("");
+
+  return `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 20px;">
+      <tr>
+        <td height="1" bgcolor="#29242d" style="height:1px;padding:0;background-color:#29242d;font-size:1px;line-height:1px;">&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding:20px 0 0;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#111016" style="border-collapse:separate;border-spacing:0;background-color:#111016;border:1px solid #2b2630;border-radius:8px;">
+            <tr>
+              <td style="padding:18px 18px 14px;">
+                <p style="margin:0 0 4px;font-size:16px;line-height:20px;font-weight:700;color:#f2ede3;">
+                  Order status
+                </p>
+                <p style="margin:0 0 16px;font-size:12px;line-height:16px;color:#a79e94;">
+                  Current status: ${escapeHtml(statusEmailCopy[order.status].label)}
+                </p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                  <tr>
+                    ${stepCells}
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  `;
+}
+
 async function sendOrderConfirmationEmail(order: Order) {
   try {
     const renderedEmail = await renderRegisteredEmailTemplate({
@@ -270,6 +382,56 @@ async function sendOrderConfirmationEmail(order: Order) {
 
     return {
       reason: "Order confirmation email failed",
+      status: "skipped" as const,
+    };
+  }
+}
+
+async function sendOrderStatusUpdateEmail(
+  order: Order,
+  previousStatus: OrderStatus,
+) {
+  if (order.status === previousStatus) {
+    return {
+      reason: "Order status did not change",
+      status: "skipped" as const,
+    };
+  }
+
+  const statusCopy = statusEmailCopy[order.status];
+
+  try {
+    const renderedEmail = await renderRegisteredEmailTemplate({
+      emailType: "Order update",
+      preheader: `Order ${order.id} is now ${statusCopy.label}.`,
+      subject: `Order status update ${order.id}`,
+      template: orderEmailRegistry.orderStatusUpdate,
+      htmlValues: {
+        orderItemsHtml: renderOrderItemRows(order),
+        statusProgressHtml: renderStatusProgressHtml(order),
+      },
+      values: {
+        currentStatus: statusCopy.label,
+        deliveryWindow: "Local delivery details to be confirmed",
+        itemCount: String(getTotalItemCount(order)),
+        itemSummary: formatItemSummary(order),
+        orderLink: resolveStorefrontUrl(`/orders/${order.id}`),
+        orderReference: order.id,
+        orderTotal: formatCurrency(order.total),
+        statusHeading: statusCopy.heading,
+        statusIntro: statusCopy.intro,
+      },
+    });
+
+    return await sendEmail({
+      ...renderedEmail,
+      to: order.customer.email,
+    });
+  } catch (error) {
+    console.error("Failed to send order status update email", error);
+
+    return {
+      reason: "Order status update email failed",
       status: "skipped" as const,
     };
   }
@@ -333,4 +495,49 @@ export async function getOrderForCustomer(
   }).exec();
 
   return order ? serializeOrder(order as OrderRecord) : null;
+}
+
+export async function listAdminOrders(): Promise<AdminOrderListItem[]> {
+  const orders = await OrderModel.find().sort({ createdAt: -1 }).exec();
+
+  return orders.map((order) => serializeAdminOrderListItem(order as OrderRecord));
+}
+
+export async function getAdminOrder(orderId: string): Promise<Order | null> {
+  if (!isValidObjectId(orderId)) {
+    return null;
+  }
+
+  const order = await OrderModel.findById(orderId).exec();
+
+  return order ? serializeOrder(order as OrderRecord) : null;
+}
+
+export async function updateAdminOrderStatus(
+  orderId: string,
+  status: OrderStatus,
+): Promise<Order | null> {
+  if (!isValidObjectId(orderId)) {
+    return null;
+  }
+
+  if (!ORDER_STATUSES.includes(status)) {
+    throw new OrderValidationError("Invalid order status");
+  }
+
+  const existingOrder = await OrderModel.findById(orderId).exec();
+
+  if (!existingOrder) {
+    return null;
+  }
+
+  const previousStatus = existingOrder.status;
+  existingOrder.status = status;
+
+  const savedOrder = await existingOrder.save();
+  const serializedOrder = serializeOrder(savedOrder as OrderRecord);
+
+  await sendOrderStatusUpdateEmail(serializedOrder, previousStatus);
+
+  return serializedOrder;
 }

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 
 import { RequireAdmin, requireAdminSession } from "../modules/auth";
 import { customerEditLoader, customerListLoader } from "../modules/customers";
+import { orderDetailLoader, orderListLoader } from "../modules/orders";
 import { productEditLoader, productListLoader } from "../modules/products";
 import { AdminLayout } from "./routes/admin.layout";
 import { CatalogueCreatePage } from "./routes/catalog/create.page";
@@ -10,6 +11,8 @@ import { CatalogueListPage } from "./routes/catalog/list.page";
 import { CustomerEditPage } from "./routes/customers/edit.page";
 import { CustomerListPage } from "./routes/customers/list.page";
 import { LoginPage } from "./routes/login/login.page";
+import { OrderDetailPage } from "./routes/orders/detail.page";
+import { OrderListPage } from "./routes/orders/list.page";
 import { PublicLayout } from "./routes/public.layout";
 import { RootLayout } from "./routes/root.layout";
 import { RouteError } from "./routes/route-error";
@@ -57,6 +60,16 @@ export const router = createBrowserRouter(
                   path: "customers/:customerId",
                   loader: customerEditLoader,
                   element: <CustomerEditPage />,
+                },
+                {
+                  path: "orders",
+                  loader: orderListLoader,
+                  element: <OrderListPage />,
+                },
+                {
+                  path: "orders/:orderId",
+                  loader: orderDetailLoader,
+                  element: <OrderDetailPage />,
                 },
               ],
             },
