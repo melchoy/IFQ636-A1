@@ -8,3 +8,4 @@ local/
 *.log
 *.tsbuildinfo
 apps/backend/uploads/
+local/

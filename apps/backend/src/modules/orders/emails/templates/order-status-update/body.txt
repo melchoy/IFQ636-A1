@@ -1,0 +1,16 @@
+Order of the Black Thorn
+
+{{statusHeading}}
+
+{{statusIntro}}
+
+Current status: {{currentStatus}}
+Order reference: {{orderReference}}
+Total: {{orderTotal}}
+Delivery window: {{deliveryWindow}}
+
+Order items
+{{itemCount}} items in this order.
+{{itemSummary}}
+
+View order status: {{orderLink}}

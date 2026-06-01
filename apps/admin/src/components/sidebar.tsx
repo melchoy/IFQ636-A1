@@ -11,11 +11,18 @@ import {
 	cn,
 	useSidebar,
 } from "@otbt/ui";
-import { Package, Plus, Settings, Users, type LucideIcon } from "lucide-react";
+import {
+	Package,
+	Plus,
+	ReceiptText,
+	Settings,
+	Users,
+	type LucideIcon,
+} from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 type NavItem = {
-	key: "products" | "add-product" | "customers";
+	key: "products" | "add-product" | "customers" | "orders";
 	label: string;
 	href: string;
 	icon: LucideIcon;
@@ -25,6 +32,7 @@ const navItems: NavItem[] = [
 	{ key: "products", label: "Products", href: "/", icon: Package },
 	{ key: "add-product", label: "Add Product", href: "/products/new", icon: Plus },
 	{ key: "customers", label: "Customers", href: "/customers", icon: Users },
+	{ key: "orders", label: "Orders", href: "/orders", icon: ReceiptText },
 ];
 
 export function AdminSidebar() {

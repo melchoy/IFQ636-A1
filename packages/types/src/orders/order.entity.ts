@@ -1,4 +1,4 @@
-export const ORDER_STATUSES = ["pending", "confirmed", "cancelled"] as const;
+export const ORDER_STATUSES = ["pending", "packed", "shipped"] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export type OrderPaymentStatus = "pending" | "paid" | "failed";

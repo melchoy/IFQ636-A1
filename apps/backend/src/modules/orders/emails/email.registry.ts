@@ -5,5 +5,6 @@ export const orderEmailRegistry = defineEmailTemplateRegistry({
   registryMetaUrl: import.meta.url,
   templates: {
     orderConfirmation: "order-confirmation",
+    orderStatusUpdate: "order-status-update",
   },
 });
