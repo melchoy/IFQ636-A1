@@ -15,9 +15,15 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--background);
+  background:
+    var(--page-backdrop, none) no-repeat bottom center / 100% auto fixed,
+    var(--background);
   color: var(--foreground);
   font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.dark {
+  --page-backdrop: url("/bg-crimson-glow.svg");
 }
 
 #root {
