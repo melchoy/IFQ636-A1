@@ -129,7 +129,7 @@ async function shutdown(exitCode) {
 async function main() {
   await loadDotEnv();
   logPorts();
-  await run("docker", ["compose", "up", "-d", "nginx"]);
+  await run("docker", ["compose", "up", "-d"]);
 
   devProcess = spawnCommand("pnpm", [
     "--parallel",
