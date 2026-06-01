@@ -13,13 +13,56 @@ const required = (key: string) => {
   return value;
 };
 
+const optional = (key: string) => {
+  const value = process.env[key];
+  return value && value.trim().length > 0 ? value : undefined;
+};
+
+const booleanValue = (key: string, fallback: boolean) => {
+  const value = optional(key);
+
+  if (value === undefined) {
+    return fallback;
+  }
+
+  return ["1", "true", "yes", "on"].includes(value.toLowerCase());
+};
+
+const numberValue = (key: string, fallback?: number) => {
+  const value = optional(key);
+
+  if (value === undefined) {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Invalid numeric environment variable: ${key}`);
+  }
+
+  return parsed;
+};
+
 export const env = {
   port: Number(process.env.BACKEND_PORT ?? process.env.PORT ?? 3000),
   clientOrigins: (process.env.CLIENT_ORIGINS ?? "http://localhost:5173,http://localhost:5174")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean),
-  mongodbUri: required("MONGODB_URI"),
-  adminJwtSecret: required("ADMIN_JWT_SECRET"),
+  get mongodbUri() {
+    return required("MONGODB_URI");
+  },
+  get adminJwtSecret() {
+    return required("ADMIN_JWT_SECRET");
+  },
   uploadsDir: process.env.UPLOADS_DIR ?? path.resolve(process.cwd(), "uploads"),
+  email: {
+    enabled: booleanValue("EMAIL_ENABLED", false),
+    host: optional("SMTP_HOST"),
+    port: numberValue("SMTP_PORT"),
+    user: optional("SMTP_USER"),
+    pass: optional("SMTP_PASS"),
+    from: optional("SMTP_FROM"),
+  },
 };

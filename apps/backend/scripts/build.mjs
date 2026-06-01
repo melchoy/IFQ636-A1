@@ -1,4 +1,4 @@
-import { rm } from "node:fs/promises";
+import { cp, rm } from "node:fs/promises";
 
 import { build } from "esbuild";
 
@@ -10,6 +10,7 @@ const external = [
   "jsonwebtoken",
   "mongoose",
   "multer",
+  "nodemailer",
 ];
 
 await rm("dist", { force: true, recursive: true });
@@ -25,4 +26,8 @@ await build({
   platform: "node",
   sourcemap: true,
   target: "node24",
+});
+
+await cp("src/modules/email/templates", "dist/email-templates", {
+  recursive: true,
 });
