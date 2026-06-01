@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Package2, ShoppingCart } from "lucide-react";
+import { LogOut, Menu, Package2, ReceiptText, ShoppingCart } from "lucide-react";
 
 import { Link } from "@otbt/web";
 import {
@@ -197,6 +197,13 @@ export function SiteHeader() {
                       <CustomerIdentity customer={customer} />
                     </div>
                     <DropdownMenuSeparator className="m-0" />
+                    <DropdownMenuItem asChild className="rounded-none px-4 py-2.5">
+                      <Link to="/orders" unstyled>
+                        <ReceiptText className="size-4" />
+                        Order history
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="m-0" />
                     <DropdownMenuItem
                       className="rounded-none px-4 py-2.5"
                       disabled={logoutCustomerMutation.isPending}
@@ -260,6 +267,12 @@ export function SiteHeader() {
                 {customer ? (
                   <div className="space-y-3">
                     <CustomerIdentity customer={customer} />
+                    <Button asChild className="w-full justify-start" variant="outline">
+                      <Link to="/orders" unstyled>
+                        <ReceiptText className="size-4" />
+                        Order history
+                      </Link>
+                    </Button>
                     <SignOutButton
                       disabled={logoutCustomerMutation.isPending}
                       onSignOut={handleSignOut}

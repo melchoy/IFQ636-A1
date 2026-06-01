@@ -83,6 +83,7 @@ const orderSchema = new Schema<OrderDocument>(
 );
 
 orderSchema.index({ "customer.email": 1 });
+orderSchema.index({ "customer.customerId": 1, createdAt: -1 });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ status: 1 });
 
