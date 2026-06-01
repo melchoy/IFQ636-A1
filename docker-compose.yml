@@ -1,6 +1,12 @@
 name: ${COMPOSE_PROJECT_NAME:-ifq683-a1}
 
 services:
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${SMTP_PORT:-1025}:1025"
+    restart: unless-stopped
+
   nginx:
     image: nginx:1.27-alpine
     extra_hosts:

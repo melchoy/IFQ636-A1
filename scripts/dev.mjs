@@ -59,6 +59,8 @@ function logPorts() {
       `storefront: http://localhost:${readPort("STOREFRONT_PORT", 5473)}`,
       `admin: http://localhost:${readPort("ADMIN_PORT", 5474)}/admin/`,
       `backend: http://localhost:${readPort("BACKEND_PORT", 5402)}`,
+      `mailpit: http://mailpit.localhost:${readPort("NGINX_PORT", 80)}`,
+      `smtp: localhost:${readPort("SMTP_PORT", 1025)}`,
       "",
     ].join("\n"),
   );
