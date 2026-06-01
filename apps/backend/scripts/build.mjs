@@ -11,6 +11,7 @@ const external = [
   "mongoose",
   "multer",
   "nodemailer",
+  "stripe",
 ];
 
 await rm("dist", { force: true, recursive: true });
