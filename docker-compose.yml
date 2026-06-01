@@ -1,12 +1,22 @@
 name: ${COMPOSE_PROJECT_NAME:-ifq683-a1}
 
 services:
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${SMTP_PORT:-1025}:1025"
+    restart: unless-stopped
+
   nginx:
     image: nginx:1.27-alpine
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
       - "${NGINX_PORT:-80}:80"
+    environment:
+      - BACKEND_PORT=${BACKEND_PORT:-5402}
+      - STOREFRONT_PORT=${STOREFRONT_PORT:-5473}
+      - ADMIN_PORT=${ADMIN_PORT:-5474}
     volumes:
-      - ${NGINX_CONFIG_PATH:-./.docker/nginx/default.conf}:/etc/nginx/conf.d/default.conf:ro
+      - ./.docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     restart: unless-stopped

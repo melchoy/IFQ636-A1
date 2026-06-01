@@ -25,8 +25,12 @@ export type SendEmailResult = SkippedEmailResult | SentEmailResult;
 function requireEmailConfig() {
   const { email } = env;
 
-  if (!email.host || !email.port || !email.user || !email.pass || !email.from) {
+  if (!email.host || !email.port || !email.from) {
     throw new Error("Email sending is enabled but SMTP configuration is incomplete");
+  }
+
+  if ((email.user && !email.pass) || (!email.user && email.pass)) {
+    throw new Error("SMTP_USER and SMTP_PASS must both be set when SMTP auth is used");
   }
 
   return email;
@@ -42,10 +46,13 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
 
   const emailConfig = requireEmailConfig();
   const transport = nodemailer.createTransport({
-    auth: {
-      pass: emailConfig.pass,
-      user: emailConfig.user,
-    },
+    auth:
+      emailConfig.user && emailConfig.pass
+        ? {
+            pass: emailConfig.pass,
+            user: emailConfig.user,
+          }
+        : undefined,
     host: emailConfig.host,
     port: emailConfig.port,
   });
