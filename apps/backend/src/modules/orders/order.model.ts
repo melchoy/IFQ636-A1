@@ -5,6 +5,7 @@ import {
   type OrderCustomerSnapshot,
   type OrderDeliveryAddress,
   type OrderItem,
+  type OrderPayment,
   type OrderStatus,
 } from "@otbt/types";
 
@@ -13,6 +14,7 @@ export interface OrderDocument {
   deliveryAddress: OrderDeliveryAddress;
   items: OrderItem[];
   status: OrderStatus;
+  payment: OrderPayment | null;
   subtotal: number;
   total: number;
   createdAt: Date;
@@ -56,6 +58,22 @@ const orderItemSchema = new Schema<OrderItem>(
   { _id: false },
 );
 
+const orderPaymentSchema = new Schema<OrderPayment>(
+  {
+    provider: { type: String, enum: ["stripe"], required: true },
+    status: {
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      required: true,
+    },
+    amount: { type: Number, required: true, min: 0 },
+    currency: { type: String, enum: ["aud"], required: true },
+    checkoutSessionId: { type: String, default: null },
+    paymentIntentId: { type: String, default: null },
+  },
+  { _id: false },
+);
+
 const orderSchema = new Schema<OrderDocument>(
   {
     customer: { type: orderCustomerSchema, required: true },
@@ -76,6 +94,7 @@ const orderSchema = new Schema<OrderDocument>(
       default: "pending",
       required: true,
     },
+    payment: { type: orderPaymentSchema, default: null },
     subtotal: { type: Number, required: true, min: 0 },
     total: { type: Number, required: true, min: 0 },
   },
@@ -86,5 +105,6 @@ orderSchema.index({ "customer.email": 1 });
 orderSchema.index({ "customer.customerId": 1, createdAt: -1 });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ status: 1 });
+orderSchema.index({ "payment.checkoutSessionId": 1 });
 
 export const OrderModel = model<OrderDocument>("Order", orderSchema);

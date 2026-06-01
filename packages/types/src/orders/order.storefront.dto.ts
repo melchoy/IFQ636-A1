@@ -20,6 +20,11 @@ export interface CheckoutResponse {
   order: Order;
 }
 
+export interface CheckoutSessionResponse {
+  orderId: string;
+  redirectUrl: string;
+}
+
 export interface OrderHistoryItem {
   id: string;
   reference: string;

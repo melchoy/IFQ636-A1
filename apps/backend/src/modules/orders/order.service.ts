@@ -4,6 +4,7 @@ import {
   ORDER_STATUSES,
   type AdminOrderListItem,
   type CheckoutRequest,
+  type CheckoutSessionResponse,
   type Order,
   type OrderCreate,
   type OrderHistoryItem,
@@ -16,6 +17,10 @@ import {
   escapeHtml,
   renderRegisteredEmailTemplate,
 } from "../email/email.templates.js";
+import {
+  createCheckoutSession,
+  verifyCheckoutSession,
+} from "../payments/payment.service.js";
 import { ProductModel } from "../products/product.model.js";
 import { orderEmailRegistry } from "./emails/email.registry.js";
 import { OrderModel, type OrderDocument } from "./order.model.js";
@@ -40,6 +45,7 @@ function serializeOrder(order: OrderRecord): Order {
     deliveryAddress: order.deliveryAddress,
     items: order.items,
     status: order.status,
+    payment: order.payment,
     subtotal: order.subtotal,
     total: order.total,
     createdAt: order.createdAt.toISOString(),
@@ -454,6 +460,7 @@ export async function createCheckoutOrder(
     },
     deliveryAddress: input.deliveryAddress,
     items,
+    payment: null,
     status: "pending",
     subtotal,
     total: subtotal,
@@ -465,6 +472,150 @@ export async function createCheckoutOrder(
   await sendOrderConfirmationEmail(serializedOrder);
 
   return serializedOrder;
+}
+
+function getStripePaymentIntentId(
+  paymentIntent: string | { id: string } | null,
+) {
+  if (!paymentIntent) {
+    return null;
+  }
+
+  return typeof paymentIntent === "string" ? paymentIntent : paymentIntent.id;
+}
+
+function getOrderOrThrow(order: OrderRecord | null) {
+  if (!order) {
+    throw new OrderValidationError("Order not found");
+  }
+
+  return order;
+}
+
+export async function createCheckoutSessionForOrder(
+  input: CheckoutRequest,
+  customerId: string | null,
+  origin: string,
+): Promise<CheckoutSessionResponse> {
+  const items = await buildOrderItems(input.items);
+  const subtotal = items.reduce((total, item) => total + item.lineTotal, 0);
+
+  const order: OrderCreate = {
+    customer: {
+      customerId,
+      firstName: input.customer.firstName,
+      lastName: input.customer.lastName,
+      email: input.customer.email,
+      phone: input.customer.phone,
+    },
+    deliveryAddress: input.deliveryAddress,
+    items,
+    payment: {
+      amount: subtotal,
+      checkoutSessionId: null,
+      currency: "aud",
+      paymentIntentId: null,
+      provider: "stripe",
+      status: "pending",
+    },
+    status: "pending",
+    subtotal,
+    total: subtotal,
+  };
+
+  const createdOrder = await OrderModel.create(order);
+  const orderId = createdOrder._id.toString();
+  const encodedOrderId = encodeURIComponent(orderId);
+  const checkoutSession = await createCheckoutSession({
+    cancelUrl: `${origin}/api/storefront/orders/checkout/stripe/cancel?orderId=${encodedOrderId}`,
+    customerEmail: input.customer.email,
+    items,
+    orderId,
+    successUrl: `${origin}/api/storefront/orders/checkout/stripe/success?orderId=${encodedOrderId}&session_id={CHECKOUT_SESSION_ID}`,
+  });
+
+  if (!checkoutSession.url) {
+    throw new OrderValidationError("Unable to create checkout session");
+  }
+
+  await OrderModel.updateOne(
+    { _id: orderId },
+    { $set: { "payment.checkoutSessionId": checkoutSession.id } },
+  ).exec();
+
+  return {
+    orderId,
+    redirectUrl: checkoutSession.url,
+  };
+}
+
+export async function confirmStripeCheckoutOrder(
+  orderId: string,
+  sessionId: string,
+): Promise<Order> {
+  if (!isValidObjectId(orderId) || !sessionId.trim()) {
+    throw new OrderValidationError("Invalid checkout confirmation");
+  }
+
+  const existingOrder = getOrderOrThrow(
+    (await OrderModel.findById(orderId).exec()) as OrderRecord | null,
+  );
+
+  if (existingOrder.payment?.status === "paid") {
+    return serializeOrder(existingOrder);
+  }
+
+  if (
+    existingOrder.payment?.checkoutSessionId &&
+    existingOrder.payment.checkoutSessionId !== sessionId
+  ) {
+    throw new OrderValidationError("Invalid checkout session");
+  }
+
+  const checkoutSession = await verifyCheckoutSession({
+    expectedTotal: existingOrder.total,
+    orderId,
+    sessionId,
+  });
+
+  const updatedOrder = getOrderOrThrow(
+    (await OrderModel.findByIdAndUpdate(
+      orderId,
+      {
+        $set: {
+          payment: {
+            amount: checkoutSession.amount_total
+              ? checkoutSession.amount_total / 100
+              : existingOrder.total,
+            checkoutSessionId: checkoutSession.id,
+            currency: "aud",
+            paymentIntentId: getStripePaymentIntentId(
+              checkoutSession.payment_intent,
+            ),
+            provider: "stripe",
+            status: "paid",
+          },
+        },
+      },
+      { new: true, runValidators: true },
+    ).exec()) as OrderRecord | null,
+  );
+  const serializedOrder = serializeOrder(updatedOrder);
+
+  await sendOrderConfirmationEmail(serializedOrder);
+
+  return serializedOrder;
+}
+
+export async function markStripeCheckoutCancelled(orderId: string) {
+  if (!isValidObjectId(orderId)) {
+    throw new OrderValidationError("Invalid checkout cancellation");
+  }
+
+  await OrderModel.updateOne(
+    { _id: orderId, "payment.status": "pending" },
+    { $set: { "payment.status": "failed" } },
+  ).exec();
 }
 
 export async function listOrdersForCustomer(
