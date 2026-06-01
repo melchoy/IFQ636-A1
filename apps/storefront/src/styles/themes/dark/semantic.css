@@ -3,7 +3,7 @@
   /* shadcn contract */
   --background:             var(--bt-thorn-black);
   --foreground:             var(--bt-bone);
-  --card:                   var(--bt-obsidian);
+  --card:                   color-mix(in oklab, var(--bt-obsidian-400) 40%, var(--bt-thorn-black));
   --card-foreground:        var(--bt-bone);
   --popover:                var(--bt-obsidian-300);
   --popover-foreground:     var(--bt-bone);
@@ -21,8 +21,8 @@
 
   --muted:                  var(--bt-obsidian-400);
   --muted-foreground:       #a9a093;
-  --border:                 #2b2b36;
-  --input:                  #2b2b36;
+  --border:                 var(--bt-obsidian-400);
+  --input:                  var(--bt-obsidian-400);
   --ring:                   var(--bt-aged-gold);
 
   /* sidebar */

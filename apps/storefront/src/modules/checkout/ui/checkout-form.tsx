@@ -179,7 +179,7 @@ export function CheckoutForm() {
         className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]"
         onSubmit={handleSubmit}
       >
-        <section className="rounded-lg border bg-background p-5">
+        <section className="rounded-lg border bg-card p-5">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
               Contact details
@@ -309,7 +309,7 @@ export function CheckoutForm() {
           </div>
         </section>
 
-        <aside className="h-fit rounded-lg border bg-background p-5">
+        <aside className="h-fit rounded-lg border bg-card p-5">
           <h2 className="text-lg font-semibold text-foreground">
             Order summary
           </h2>
