@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 
-import type { LoginCustomerResponse, OrderHistoryResponse } from "@otbt/types";
+import type {
+  LoginCustomerResponse,
+  OrderDetailResponse,
+  OrderHistoryResponse,
+} from "@otbt/types";
 
 import { app } from "../apps/backend/src/app.js";
 import { env } from "../apps/backend/src/config/env.js";
@@ -50,39 +54,43 @@ try {
     password,
   });
 
-  const includedOrder = await createCheckoutOrder({
-    customer: {
-      customerId: customer.id,
-      firstName: customer.firstName,
-      lastName: customer.lastName,
-      email: customer.email,
+  const includedOrder = await createCheckoutOrder(
+    {
+      customer: {
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+      },
+      deliveryAddress: {
+        recipientName: "Smoke Orders",
+        addressLine1: "1 Endpoint Street",
+        suburb: "Brisbane",
+        state: "QLD",
+        postcode: "4000",
+      },
+      items: [{ productId: product.id, quantity: 1 }],
     },
-    deliveryAddress: {
-      recipientName: "Smoke Orders",
-      addressLine1: "1 Endpoint Street",
-      suburb: "Brisbane",
-      state: "QLD",
-      postcode: "4000",
-    },
-    items: [{ productId: product.id, quantity: 1 }],
-  });
+    customer.id,
+  );
 
-  const excludedOrder = await createCheckoutOrder({
-    customer: {
-      customerId: otherCustomer.id,
-      firstName: otherCustomer.firstName,
-      lastName: otherCustomer.lastName,
-      email: otherCustomer.email,
+  const excludedOrder = await createCheckoutOrder(
+    {
+      customer: {
+        firstName: otherCustomer.firstName,
+        lastName: otherCustomer.lastName,
+        email: otherCustomer.email,
+      },
+      deliveryAddress: {
+        recipientName: "Smoke Other Orders",
+        addressLine1: "2 Endpoint Street",
+        suburb: "Brisbane",
+        state: "QLD",
+        postcode: "4000",
+      },
+      items: [{ productId: product.id, quantity: 1 }],
     },
-    deliveryAddress: {
-      recipientName: "Smoke Other Orders",
-      addressLine1: "2 Endpoint Street",
-      suburb: "Brisbane",
-      state: "QLD",
-      postcode: "4000",
-    },
-    items: [{ productId: product.id, quantity: 1 }],
-  });
+    otherCustomer.id,
+  );
 
   const loginResponse = await fetch(`${baseUrl}/api/storefront/auth/login`, {
     body: JSON.stringify({ email, password }),
@@ -95,6 +103,20 @@ try {
     headers: { Authorization: `Bearer ${loginBody.token}` },
   });
   const historyBody = (await historyResponse.json()) as OrderHistoryResponse;
+  const detailResponse = await fetch(
+    `${baseUrl}/api/storefront/orders/${includedOrder.id}`,
+    {
+      headers: { Authorization: `Bearer ${loginBody.token}` },
+    },
+  );
+  const detailBody = (await detailResponse.json()) as OrderDetailResponse;
+  const otherDetailResponse = await fetch(
+    `${baseUrl}/api/storefront/orders/${excludedOrder.id}`,
+    {
+      headers: { Authorization: `Bearer ${loginBody.token}` },
+    },
+  );
+  const otherDetailBody = await otherDetailResponse.json();
 
   const unauthenticatedResponse = await fetch(
     `${baseUrl}/api/storefront/orders`,
@@ -103,6 +125,9 @@ try {
 
   assert.equal(loginResponse.status, 200);
   assert.equal(historyResponse.status, 200);
+  assert.equal(detailResponse.status, 200);
+  assert.equal(detailBody.order.id, includedOrder.id);
+  assert.equal(otherDetailResponse.status, 404);
   assert.equal(unauthenticatedResponse.status, 401);
   assert.ok(
     historyBody.orders.some((order) => order.id === includedOrder.id),
@@ -119,8 +144,11 @@ try {
       {
         ok: true,
         historyStatus: historyResponse.status,
+        detailStatus: detailResponse.status,
+        otherDetailStatus: otherDetailResponse.status,
         unauthenticatedStatus: unauthenticatedResponse.status,
         unauthenticatedBody,
+        otherDetailBody,
         includedOrder: includedOrder.id,
         excludedOrder: excludedOrder.id,
         orders: historyBody.orders.map((order) => ({

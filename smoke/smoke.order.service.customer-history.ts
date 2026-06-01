@@ -26,45 +26,49 @@ try {
 
   assert.ok(product, "expected at least one public active product");
 
-  const customerOrder = await createCheckoutOrder({
-    customer: {
-      customerId,
-      firstName: "Smoke",
-      lastName: "History",
-      email: `smoke-history-${now}@example.com`,
-      phone: null,
+  const customerOrder = await createCheckoutOrder(
+    {
+      customer: {
+        firstName: "Smoke",
+        lastName: "History",
+        email: `smoke-history-${now}@example.com`,
+        phone: null,
+      },
+      deliveryAddress: {
+        recipientName: "Smoke History",
+        addressLine1: "1 Smoke Street",
+        addressLine2: null,
+        suburb: "Brisbane",
+        state: "QLD",
+        postcode: "4000",
+        instructions: null,
+      },
+      items: [{ productId: product.id, quantity: 2 }],
     },
-    deliveryAddress: {
-      recipientName: "Smoke History",
-      addressLine1: "1 Smoke Street",
-      addressLine2: null,
-      suburb: "Brisbane",
-      state: "QLD",
-      postcode: "4000",
-      instructions: null,
-    },
-    items: [{ productId: product.id, quantity: 2 }],
-  });
+    customerId,
+  );
 
-  const otherCustomerOrder = await createCheckoutOrder({
-    customer: {
-      customerId: otherCustomerId,
-      firstName: "Other",
-      lastName: "Customer",
-      email: `smoke-history-other-${now}@example.com`,
-      phone: null,
+  const otherCustomerOrder = await createCheckoutOrder(
+    {
+      customer: {
+        firstName: "Other",
+        lastName: "Customer",
+        email: `smoke-history-other-${now}@example.com`,
+        phone: null,
+      },
+      deliveryAddress: {
+        recipientName: "Other Customer",
+        addressLine1: "2 Smoke Street",
+        addressLine2: null,
+        suburb: "Brisbane",
+        state: "QLD",
+        postcode: "4000",
+        instructions: null,
+      },
+      items: [{ productId: product.id, quantity: 1 }],
     },
-    deliveryAddress: {
-      recipientName: "Other Customer",
-      addressLine1: "2 Smoke Street",
-      addressLine2: null,
-      suburb: "Brisbane",
-      state: "QLD",
-      postcode: "4000",
-      instructions: null,
-    },
-    items: [{ productId: product.id, quantity: 1 }],
-  });
+    otherCustomerId,
+  );
 
   const history = await listOrdersForCustomer(customerId);
 

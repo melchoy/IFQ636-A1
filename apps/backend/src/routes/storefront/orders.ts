@@ -1,6 +1,7 @@
 import type {
   CheckoutRequest,
   CheckoutResponse,
+  OrderDetailResponse,
   OrderHistoryResponse,
 } from "@otbt/types";
 import { Router } from "express";
@@ -12,6 +13,7 @@ import {
 } from "../../middleware/require-customer.js";
 import {
   createCheckoutOrder,
+  getOrderForCustomer,
   listOrdersForCustomer,
   OrderValidationError,
 } from "../../modules/orders/order.service.js";
@@ -62,6 +64,10 @@ function parseCheckoutRequest(body: unknown): CheckoutRequest {
   return input as CheckoutRequest;
 }
 
+function getOrderIdParam(orderId: string | string[]) {
+  return Array.isArray(orderId) ? orderId[0] : orderId;
+}
+
 storefrontOrdersRouter.get(
   "/",
   requireCustomer,
@@ -74,6 +80,31 @@ storefrontOrdersRouter.get(
       const response: OrderHistoryResponse = {
         orders: await listOrdersForCustomer(req.customer.id),
       };
+
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+storefrontOrdersRouter.get(
+  "/:orderId",
+  requireCustomer,
+  async (req: CustomerAuthRequest, res, next) => {
+    try {
+      if (!req.customer) {
+        throw new HttpError(401, "Not authorized");
+      }
+
+      const orderId = getOrderIdParam(req.params.orderId);
+      const order = await getOrderForCustomer(orderId, req.customer.id);
+
+      if (!order) {
+        throw new HttpError(404, "Order not found");
+      }
+
+      const response: OrderDetailResponse = { order };
 
       res.json(response);
     } catch (error) {

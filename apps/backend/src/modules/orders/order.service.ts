@@ -40,6 +40,12 @@ function serializeOrder(order: OrderRecord): Order {
 
 function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
   const id = order._id.toString();
+  const itemNames = order.items.map((item) => item.name);
+  const remainingItemCount = Math.max(0, itemNames.length - 2);
+  const itemSummary =
+    remainingItemCount > 0
+      ? `${itemNames.slice(0, 2).join(", ")} +${remainingItemCount} more`
+      : itemNames.join(", ");
 
   return {
     id,
@@ -47,6 +53,7 @@ function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
     status: order.status,
     total: order.total,
     itemCount: order.items.reduce((total, item) => total + item.quantity, 0),
+    itemSummary,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
   };
@@ -150,4 +157,20 @@ export async function listOrdersForCustomer(
     .exec();
 
   return orders.map((order) => serializeOrderHistoryItem(order as OrderRecord));
+}
+
+export async function getOrderForCustomer(
+  orderId: string,
+  customerId: string,
+): Promise<Order | null> {
+  if (!isValidObjectId(orderId) || !customerId.trim()) {
+    return null;
+  }
+
+  const order = await OrderModel.findOne({
+    _id: orderId,
+    "customer.customerId": customerId,
+  }).exec();
+
+  return order ? serializeOrder(order as OrderRecord) : null;
 }

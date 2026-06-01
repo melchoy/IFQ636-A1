@@ -26,8 +26,17 @@ function formatOrderStatus(status: string) {
 }
 
 function OrderStatusBadge({ status }: { status: string }) {
+  const statusClassName =
+    status === "confirmed"
+      ? "border-blue-200 bg-blue-50 text-blue-700"
+      : status === "cancelled"
+        ? "border-red-200 bg-red-50 text-red-700"
+        : "border-border bg-muted text-muted-foreground";
+
   return (
-    <span className="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium text-foreground">
+    <span
+      className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-medium ${statusClassName}`}
+    >
       {formatOrderStatus(status)}
     </span>
   );
@@ -35,17 +44,21 @@ function OrderStatusBadge({ status }: { status: string }) {
 
 function OrderRow({ order }: { order: OrderHistoryItem }) {
   return (
-    <article className="grid gap-4 border-b py-5 last:border-b-0 md:grid-cols-[minmax(0,1fr)_120px_120px_140px] md:items-center">
+    <article className="grid gap-4 border-b py-5 last:border-b-0 md:grid-cols-[minmax(0,1.4fr)_minmax(180px,1fr)_120px_120px] md:items-center">
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-foreground">
+        <Link
+          className="text-sm font-semibold text-foreground hover:underline"
+          to={`/orders/${order.id}`}
+        >
           Order {order.reference}
-        </p>
+        </Link>
         <p className="mt-1 text-sm text-muted-foreground">
           {formatDate(order.createdAt)}
         </p>
       </div>
       <p className="text-sm text-muted-foreground">
-        {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
+        {order.itemSummary ||
+          `${order.itemCount} ${order.itemCount === 1 ? "item" : "items"}`}
       </p>
       <p className="text-sm font-semibold text-foreground">
         {formatPrice(order.total)}
@@ -87,9 +100,9 @@ export function OrderList({ orders }: { orders: OrderHistoryItem[] }) {
       </div>
 
       <div className="mt-8 rounded-lg border bg-background px-5">
-        <div className="hidden border-b py-3 text-xs font-medium uppercase text-muted-foreground md:grid md:grid-cols-[minmax(0,1fr)_120px_120px_140px]">
+        <div className="hidden border-b py-3 text-xs font-medium uppercase text-muted-foreground md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(180px,1fr)_120px_120px]">
           <span>Order</span>
-          <span>Items</span>
+          <span>Summary</span>
           <span>Total</span>
           <span>Status</span>
         </div>

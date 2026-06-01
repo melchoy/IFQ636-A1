@@ -28,8 +28,13 @@ export interface OrderHistoryItem {
   status: OrderStatus;
   total: number;
   itemCount: number;
+  itemSummary: string;
 }
 
 export interface OrderHistoryResponse {
   orders: OrderHistoryItem[];
+}
+
+export interface OrderDetailResponse {
+  order: Order;
 }
