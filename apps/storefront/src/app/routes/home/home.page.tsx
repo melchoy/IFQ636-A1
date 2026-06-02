@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router";
 
 import { Button } from "@otbt/ui";
 import { Link } from "@otbt/web";
@@ -7,8 +8,17 @@ import { ProductCard } from "../../../modules/products/ui/product-card";
 import { usePublicProductsQuery } from "../../../modules/products/products.query";
 
 const PRODUCT_PAGE_SIZE = 12;
+const COLLECTION_SECTION_ID = "catalogue";
+
+function scrollToCollection() {
+  document.getElementById(COLLECTION_SECTION_ID)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}
 
 export function HomePage() {
+  const location = useLocation();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [visibleProductCount, setVisibleProductCount] =
     useState(PRODUCT_PAGE_SIZE);
@@ -23,6 +33,12 @@ export function HomePage() {
   function showMoreProducts() {
     setVisibleProductCount((currentCount) => currentCount + PRODUCT_PAGE_SIZE);
   }
+
+  useEffect(() => {
+    if (location.hash === `#${COLLECTION_SECTION_ID}`) {
+      scrollToCollection();
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     const loadMoreElement = loadMoreRef.current;
@@ -67,10 +83,8 @@ export function HomePage() {
               scrambled it to make dummy text for Letraset's Body Type sheets.
             </p>
             <div className="mt-6 flex gap-5 md:mt-8">
-              <Button asChild>
-                <Link to="/#catalogue" unstyled>
-                  Shop flowers
-                </Link>
+              <Button type="button" onClick={scrollToCollection}>
+                Shop flowers
               </Button>
               <Button asChild variant="secondary">
                 <Link to="/sign-in" unstyled>
@@ -90,7 +104,10 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="catalogue" className="py-8 sm:py-10 md:py-12">
+      <section
+        id={COLLECTION_SECTION_ID}
+        className="scroll-mt-4 py-8 sm:py-10 md:py-12"
+      >
         <div className="mb-5 flex flex-col gap-2 sm:mb-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm text-muted-foreground">Collection</p>
