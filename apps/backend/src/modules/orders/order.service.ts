@@ -38,12 +38,42 @@ export class OrderValidationError extends Error {
   }
 }
 
-function serializeOrder(order: OrderRecord): Order {
+async function hydrateOrderItemImages(items: OrderItem[]): Promise<OrderItem[]> {
+  const productIdsNeedingImages = [
+    ...new Set(
+      items
+        .filter((item) => !item.imageUrl)
+        .map((item) => item.productId)
+        .filter((productId) => isValidObjectId(productId)),
+    ),
+  ];
+
+  if (productIdsNeedingImages.length === 0) {
+    return items;
+  }
+
+  const products = await ProductModel.find({
+    _id: { $in: productIdsNeedingImages },
+  })
+    .select({ imageUrl: 1 })
+    .exec();
+
+  const imageUrlByProductId = new Map(
+    products.map((product) => [product._id.toString(), product.imageUrl ?? null]),
+  );
+
+  return items.map((item) => ({
+    ...item,
+    imageUrl: item.imageUrl ?? imageUrlByProductId.get(item.productId) ?? null,
+  }));
+}
+
+async function serializeOrder(order: OrderRecord): Promise<Order> {
   return {
     id: order._id.toString(),
     customer: order.customer,
     deliveryAddress: order.deliveryAddress,
-    items: order.items,
+    items: await hydrateOrderItemImages(order.items),
     status: order.status,
     payment: order.payment,
     subtotal: order.subtotal,
@@ -74,8 +104,10 @@ function serializeOrderHistoryItem(order: OrderRecord): OrderHistoryItem {
   };
 }
 
-function serializeAdminOrderListItem(order: OrderRecord): AdminOrderListItem {
-  const serializedOrder = serializeOrder(order);
+async function serializeAdminOrderListItem(
+  order: OrderRecord,
+): Promise<AdminOrderListItem> {
+  const serializedOrder = await serializeOrder(order);
   const itemNames = serializedOrder.items.map((item) => item.name);
   const remainingItemCount = Math.max(0, itemNames.length - 2);
   const itemSummary =
@@ -467,7 +499,7 @@ export async function createCheckoutOrder(
   };
 
   const createdOrder = await OrderModel.create(order);
-  const serializedOrder = serializeOrder(createdOrder as OrderRecord);
+  const serializedOrder = await serializeOrder(createdOrder as OrderRecord);
 
   await sendOrderConfirmationEmail(serializedOrder);
 
@@ -562,7 +594,7 @@ export async function confirmStripeCheckoutOrder(
   );
 
   if (existingOrder.payment?.status === "paid") {
-    return serializeOrder(existingOrder);
+    return await serializeOrder(existingOrder);
   }
 
   if (
@@ -600,7 +632,7 @@ export async function confirmStripeCheckoutOrder(
       { new: true, runValidators: true },
     ).exec()) as OrderRecord | null,
   );
-  const serializedOrder = serializeOrder(updatedOrder);
+  const serializedOrder = await serializeOrder(updatedOrder);
 
   await sendOrderConfirmationEmail(serializedOrder);
 
@@ -645,13 +677,15 @@ export async function getOrderForCustomer(
     "customer.customerId": customerId,
   }).exec();
 
-  return order ? serializeOrder(order as OrderRecord) : null;
+  return order ? await serializeOrder(order as OrderRecord) : null;
 }
 
 export async function listAdminOrders(): Promise<AdminOrderListItem[]> {
   const orders = await OrderModel.find().sort({ createdAt: -1 }).exec();
 
-  return orders.map((order) => serializeAdminOrderListItem(order as OrderRecord));
+  return Promise.all(
+    orders.map((order) => serializeAdminOrderListItem(order as OrderRecord)),
+  );
 }
 
 export async function getAdminOrder(orderId: string): Promise<Order | null> {
@@ -661,7 +695,7 @@ export async function getAdminOrder(orderId: string): Promise<Order | null> {
 
   const order = await OrderModel.findById(orderId).exec();
 
-  return order ? serializeOrder(order as OrderRecord) : null;
+  return order ? await serializeOrder(order as OrderRecord) : null;
 }
 
 export async function updateAdminOrderStatus(
@@ -686,7 +720,7 @@ export async function updateAdminOrderStatus(
   existingOrder.status = status;
 
   const savedOrder = await existingOrder.save();
-  const serializedOrder = serializeOrder(savedOrder as OrderRecord);
+  const serializedOrder = await serializeOrder(savedOrder as OrderRecord);
 
   await sendOrderStatusUpdateEmail(serializedOrder, previousStatus);
 

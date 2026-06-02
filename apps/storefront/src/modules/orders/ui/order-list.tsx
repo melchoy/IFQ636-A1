@@ -1,7 +1,11 @@
+import { ReceiptText } from "lucide-react";
+
 import type { OrderHistoryItem } from "@otbt/types";
 
 import { Button } from "@otbt/ui";
 import { Link } from "@otbt/web";
+
+import { StorefrontEmptyState } from "../../common/storefront-empty-state";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-AU", {
@@ -71,17 +75,19 @@ function OrderRow({ order }: { order: OrderHistoryItem }) {
 export function OrderList({ orders }: { orders: OrderHistoryItem[] }) {
   if (orders.length === 0) {
     return (
-      <section className="rounded-lg border bg-card p-8 text-center">
-        <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Orders you place through this storefront will appear here.
-        </p>
-        <Button asChild className="mt-6">
-          <Link to="/" unstyled>
-            Browse catalogue
-          </Link>
-        </Button>
-      </section>
+      <StorefrontEmptyState
+        description="Orders you place through this storefront will appear here."
+        icon={ReceiptText}
+        label="No orders yet"
+        title="You have not placed an order."
+        actions={
+          <Button asChild className="h-10 min-w-[168px] px-4">
+            <Link to="/" unstyled>
+              Browse catalogue
+            </Link>
+          </Button>
+        }
+      />
     );
   }
 

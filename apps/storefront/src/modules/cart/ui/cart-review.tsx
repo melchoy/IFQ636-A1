@@ -1,14 +1,22 @@
-import { ImageIcon, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 
 import { Button, Input } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
+import { ProductImageWell } from "../../common/product-image-well";
+import { StorefrontEmptyState } from "../../common/storefront-empty-state";
+import { StorefrontPage } from "../../common/storefront-page";
 import {
   clearCartItems,
   removeCartItem,
   updateCartItemQuantity,
   useCart,
 } from "..";
+
+const cartBreadcrumbs = [
+  { label: "Collection", to: "/" },
+  { label: "Cart" },
+] as const;
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-AU", {
@@ -22,40 +30,29 @@ export function CartReview() {
 
   if (cart.items.length === 0) {
     return (
-      <main className="storefront-container px-4 py-4 sm:py-5 md:px-6 lg:py-6">
-        <p className="text-xs leading-[18px] text-muted-foreground">Cart</p>
-
-        <section className="mt-4 flex min-h-[480px] flex-col items-center justify-center rounded-lg border bg-card px-6 py-16 text-center">
-          <div className="flex size-[124px] items-center justify-center rounded-[10px] border border-border/80 bg-[color-mix(in_oklab,var(--bt-obsidian)_82%,transparent)]">
-            <ShoppingCart
-              aria-hidden="true"
-              className="size-[54px] text-primary"
-              strokeWidth={1.25}
-            />
-          </div>
-
-          <p className="mt-8 text-[13px] font-semibold uppercase tracking-wide text-primary">
-            Cart empty
-          </p>
-          <h1 className="mt-4 text-[34px] font-bold leading-[42px] text-foreground">
-            Your cart is empty.
-          </h1>
-          <p className="mt-4 max-w-[500px] text-[17px] leading-[26px] text-muted-foreground">
-            Browse the collection and add selected arrangements before checkout.
-          </p>
-          <Button asChild className="mt-10 h-10 min-w-[168px] px-4">
-            <Link to="/" unstyled>
-              Shop collection
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <StorefrontPage breadcrumbs={[...cartBreadcrumbs]}>
+        <div className="mt-4">
+          <StorefrontEmptyState
+            description="Browse the collection and add selected arrangements before checkout."
+            icon={ShoppingCart}
+            label="Cart empty"
+            title="Your cart is empty."
+            actions={
+              <Button asChild className="h-10 min-w-[168px] px-4">
+                <Link to="/" unstyled>
+                  Browse catalogue
+                </Link>
+              </Button>
+            }
+          />
+        </div>
+      </StorefrontPage>
     );
   }
 
   return (
-    <main className="storefront-container px-4 py-10 md:px-6">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <StorefrontPage breadcrumbs={[...cartBreadcrumbs]}>
+      <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section>
           <h1 className="text-4xl font-semibold text-foreground">Your cart</h1>
           <div className="mt-8 divide-y rounded-lg border bg-card">
@@ -64,20 +61,12 @@ export function CartReview() {
                 className="grid gap-4 p-4 sm:grid-cols-[96px_minmax(0,1fr)_auto]"
                 key={item.productId}
               >
-                <div className="flex aspect-square items-center justify-center rounded-md bg-muted">
-                  {item.imageUrl ? (
-                    <img
-                      alt={item.name}
-                      className="max-h-full max-w-full object-contain object-center"
-                      src={item.imageUrl}
-                    />
-                  ) : (
-                    <ImageIcon
-                      aria-hidden="true"
-                      className="size-8 text-muted-foreground"
-                    />
-                  )}
-                </div>
+                <ProductImageWell
+                  alt={item.name}
+                  className="size-24 rounded-md"
+                  imageClassName="size-[74px]"
+                  imageUrl={item.imageUrl}
+                />
 
                 <div className="min-w-0">
                   <h2 className="text-base font-semibold text-foreground">
@@ -170,6 +159,6 @@ export function CartReview() {
           </Button>
         </aside>
       </div>
-    </main>
+    </StorefrontPage>
   );
 }
