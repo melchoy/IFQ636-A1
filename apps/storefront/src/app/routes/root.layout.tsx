@@ -1,12 +1,16 @@
 import { Outlet } from "react-router";
 
+import { SiteFooter } from "../../modules/navigation/site-footer";
 import { SiteHeader } from "../../modules/navigation/site-header";
 
 export function RootLayout() {
   return (
-    <div className="min-h-svh text-foreground">
+    <div className="flex min-h-svh flex-col pb-10 text-foreground">
       <SiteHeader />
-      <Outlet />
+      <div className="flex flex-1 flex-col">
+        <Outlet />
+      </div>
+      <SiteFooter />
     </div>
   );
 }
