@@ -1,4 +1,5 @@
-# Order of the Black Thorn
+# IFQ636 - Assignment 1
+## Order of the Black Thorn
 
 Order of the Black Thorn is an online store for dark floral arrangements, vessels, and keepsakes. It includes a public storefront, customer account and order workflows, and an admin dashboard for managing the catalogue and reviewing orders.
 
