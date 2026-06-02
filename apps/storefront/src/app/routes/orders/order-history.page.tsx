@@ -1,15 +1,23 @@
 import { useEffect } from "react";
+import { AlertCircle, LogIn } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
+import { StorefrontEmptyState } from "../../../modules/common/storefront-empty-state";
+import { StorefrontPage } from "../../../modules/common/storefront-page";
 import { getSessionToken } from "../../../modules/customers/auth/customer-auth.storage";
 import {
   orderListQueryKey,
   useOrderListQuery,
 } from "../../../modules/orders/orders.query";
 import { OrderList } from "../../../modules/orders/ui/order-list";
+
+const ordersBreadcrumbs = [
+  { label: "Account" },
+  { label: "Orders" },
+] as const;
 
 export function OrderHistoryPage() {
   const queryClient = useQueryClient();
@@ -24,48 +32,65 @@ export function OrderHistoryPage() {
 
   if (!hasSessionToken) {
     return (
-      <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-card p-8 text-center">
-          <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Sign in to view your previous storefront orders.
-          </p>
-          <Button asChild className="mt-6">
-            <Link to="/login" unstyled>
-              Sign in
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <StorefrontPage breadcrumbs={[...ordersBreadcrumbs]}>
+        <div className="mt-4">
+          <StorefrontEmptyState
+            description="Sign in to view your previous storefront orders."
+            icon={LogIn}
+            label="Sign in required"
+            title="Your orders are private."
+            actions={
+              <Button asChild className="h-10 min-w-[168px] px-4">
+                <Link to="/login" unstyled>
+                  Sign in
+                </Link>
+              </Button>
+            }
+          />
+        </div>
+      </StorefrontPage>
     );
   }
 
   if (orderListQuery.isLoading) {
     return (
-      <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-card p-8 text-center">
+      <StorefrontPage breadcrumbs={[...ordersBreadcrumbs]}>
+        <div className="mt-4 rounded-lg border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Loading orders...</p>
-        </section>
-      </main>
+        </div>
+      </StorefrontPage>
     );
   }
 
   if (orderListQuery.isError) {
     return (
-      <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="rounded-lg border bg-card p-8 text-center">
-          <h1 className="text-3xl font-semibold text-foreground">Orders</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            We could not load your orders.
-          </p>
-        </section>
-      </main>
+      <StorefrontPage breadcrumbs={[...ordersBreadcrumbs]}>
+        <div className="mt-4">
+          <StorefrontEmptyState
+            description="We could not load your orders. Try again in a moment."
+            icon={AlertCircle}
+            label="Unable to load"
+            title="Something went wrong."
+            actions={
+              <Button
+                className="h-10 min-w-[168px] px-4"
+                onClick={() => orderListQuery.refetch()}
+                type="button"
+              >
+                Try again
+              </Button>
+            }
+          />
+        </div>
+      </StorefrontPage>
     );
   }
 
   return (
-    <main className="storefront-container px-4 py-10 md:px-6">
-      <OrderList orders={orderListQuery.data?.orders ?? []} />
-    </main>
+    <StorefrontPage breadcrumbs={[...ordersBreadcrumbs]}>
+      <div className="mt-4">
+        <OrderList orders={orderListQuery.data?.orders ?? []} />
+      </div>
+    </StorefrontPage>
   );
 }

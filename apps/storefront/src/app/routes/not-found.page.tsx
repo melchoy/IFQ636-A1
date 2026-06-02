@@ -23,7 +23,7 @@ export function NotFoundPage() {
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>
             <Link to="/" unstyled>
-              Browse collection
+              Browse catalogue
             </Link>
           </Button>
           {cart.itemCount > 0 ? (

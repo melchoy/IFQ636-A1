@@ -5,6 +5,7 @@ import { Link } from "react-router";
 
 import type { ProductDetail as ProductDetailDto } from "@otbt/types";
 
+import { StorefrontBreadcrumbs } from "../../common/storefront-breadcrumbs";
 import { AddToCartButton } from "./add-to-cart-button";
 
 function formatPrice(price: number) {
@@ -24,16 +25,12 @@ export function ProductDetail({ product }: { product: ProductDetailDto }) {
     <main className="storefront-container px-4 py-8 md:px-6 lg:py-10">
       <article className="grid gap-10 lg:grid-cols-[minmax(0,680px)_minmax(420px,620px)] lg:gap-[68px]">
         <section className="max-w-[680px]">
-          <nav
-            aria-label="Breadcrumb"
-            className="text-[13px] font-medium leading-[18px] text-muted-foreground"
-          >
-            <Link to="/" className="hover:text-foreground">
-              Collection
-            </Link>
-            <span aria-hidden="true"> / </span>
-            <span>{product.name}</span>
-          </nav>
+          <StorefrontBreadcrumbs
+            items={[
+              { label: "Collection", to: "/" },
+              { label: product.name },
+            ]}
+          />
 
           <h1 className="mt-5 text-[42px] font-semibold leading-[1.08] tracking-normal text-foreground sm:text-[52px]">
             {product.name}

@@ -2,6 +2,9 @@ import type { Order } from "@otbt/types";
 
 import { Link } from "@otbt/web";
 
+import { ProductImageWell } from "../../common/product-image-well";
+import { StorefrontPage } from "../../common/storefront-page";
+
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-AU", {
     style: "currency",
@@ -33,10 +36,23 @@ function addressLines(order: Order) {
   ].filter(Boolean);
 }
 
-export function OrderDetail({ order }: { order: Order }) {
+type OrderDetailProps = {
+  order: Order;
+  orderLabel?: string;
+};
+
+export function OrderDetail({ order, orderLabel }: OrderDetailProps) {
+  const displayReference = orderLabel ?? order.id;
+
   return (
-    <main className="storefront-container px-4 py-10 md:px-6">
-      <section>
+    <StorefrontPage
+      breadcrumbs={[
+        { label: "Account" },
+        { label: "Orders", to: "/orders" },
+        { label: `Order ${displayReference}` },
+      ]}
+    >
+      <section className="mt-4">
         <Link className="text-sm font-medium text-muted-foreground" to="/orders">
           Back to orders
         </Link>
@@ -44,7 +60,7 @@ export function OrderDetail({ order }: { order: Order }) {
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-4xl font-semibold text-foreground">
-              Order {order.id}
+              Order {displayReference}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Placed {formatDate(order.createdAt)}
@@ -64,13 +80,21 @@ export function OrderDetail({ order }: { order: Order }) {
                   className="grid gap-3 py-4 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_80px_110px] sm:items-start"
                   key={item.productId}
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {item.name}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      SKU {item.sku}
-                    </p>
+                  <div className="flex min-w-0 items-start gap-3">
+                    <ProductImageWell
+                      alt={item.name}
+                      className="size-[60px] rounded-[5px]"
+                      imageClassName="size-[50px]"
+                      imageUrl={item.imageUrl}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground">
+                        {item.name}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        SKU {item.sku}
+                      </p>
+                    </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Qty {item.quantity}
@@ -116,6 +140,6 @@ export function OrderDetail({ order }: { order: Order }) {
           </aside>
         </div>
       </section>
-    </main>
+    </StorefrontPage>
   );
 }

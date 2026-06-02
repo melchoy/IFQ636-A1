@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
+import { CircleCheck, ShoppingCart } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -7,6 +8,9 @@ import { Button, Input } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
 import { clearCartItems, useCart } from "../../cart";
+import { ProductImageWell } from "../../common/product-image-well";
+import { StorefrontEmptyState } from "../../common/storefront-empty-state";
+import { StorefrontPage } from "../../common/storefront-page";
 import { currentCustomerQueryOptions } from "../../customers/auth/customer-auth.query";
 import { useCheckoutMutation } from "../checkout.query";
 
@@ -23,6 +27,12 @@ type CheckoutFormState = {
   postcode: string;
   instructions: string;
 };
+
+const checkoutBreadcrumbs = [
+  { label: "Collection", to: "/" },
+  { label: "Cart", to: "/cart" },
+  { label: "Checkout" },
+] as const;
 
 const initialCheckoutFormState: CheckoutFormState = {
   firstName: "",
@@ -154,50 +164,59 @@ export function CheckoutForm() {
 
   if (completedOrderId) {
     return (
-      <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
-          <p className="text-sm text-muted-foreground">Payment received</p>
-          <h1 className="mt-2 text-3xl font-semibold text-foreground">
-            Your order has been placed
-          </h1>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Your order reference is{" "}
-            <span className="font-medium text-foreground">
-              {completedOrderId}
-            </span>
-            .
-          </p>
-          <Button asChild className="mt-6">
-            <Link to="/" unstyled>
-              Continue shopping
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <StorefrontPage breadcrumbs={[...checkoutBreadcrumbs]}>
+        <div className="mt-4">
+          <StorefrontEmptyState
+            description={
+              <>
+                Your order reference is{" "}
+                <span className="font-medium text-foreground">
+                  {completedOrderId}
+                </span>
+                . We will prepare your arrangement for delivery.
+              </>
+            }
+            icon={CircleCheck}
+            label="Payment received"
+            title="Your order has been placed."
+            actions={
+              <Button asChild className="h-10 min-w-[168px] px-4">
+                <Link to="/" unstyled>
+                  Browse catalogue
+                </Link>
+              </Button>
+            }
+          />
+        </div>
+      </StorefrontPage>
     );
   }
 
   if (cart.items.length === 0) {
     return (
-      <main className="storefront-container px-4 py-10 md:px-6">
-        <section className="mx-auto max-w-2xl rounded-lg border bg-card p-8 text-center">
-          <h1 className="text-3xl font-semibold text-foreground">Checkout</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Your cart is empty.
-          </p>
-          <Button asChild className="mt-6">
-            <Link to="/" unstyled>
-              Browse catalogue
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <StorefrontPage breadcrumbs={[...checkoutBreadcrumbs]}>
+        <div className="mt-4">
+          <StorefrontEmptyState
+            description="Add arrangements to your cart before continuing to checkout."
+            icon={ShoppingCart}
+            label="Cart empty"
+            title="Nothing to checkout yet."
+            actions={
+              <Button asChild className="h-10 min-w-[168px] px-4">
+                <Link to="/" unstyled>
+                  Browse catalogue
+                </Link>
+              </Button>
+            }
+          />
+        </div>
+      </StorefrontPage>
     );
   }
 
   return (
-    <main className="storefront-container px-4 py-10 md:px-6">
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <StorefrontPage breadcrumbs={[...checkoutBreadcrumbs]}>
+      <div className="mb-8 mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-4xl font-semibold text-foreground">Checkout</h1>
           <p className="mt-3 text-base text-muted-foreground">
@@ -353,15 +372,23 @@ export function CheckoutForm() {
             {cart.items.map((item) => (
               <div className="py-4" key={item.productId}>
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {item.name}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Qty {item.quantity}
-                    </p>
+                  <div className="flex min-w-0 items-start gap-3">
+                    <ProductImageWell
+                      alt={item.name}
+                      className="size-[50px] rounded-[5px]"
+                      imageClassName="size-[42px]"
+                      imageUrl={item.imageUrl}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {item.name}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Qty {item.quantity}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="shrink-0 text-sm font-semibold text-foreground">
                     {formatPrice(item.lineTotal)}
                   </p>
                 </div>
@@ -395,6 +422,6 @@ export function CheckoutForm() {
           </Button>
         </aside>
       </form>
-    </main>
+    </StorefrontPage>
   );
 }
