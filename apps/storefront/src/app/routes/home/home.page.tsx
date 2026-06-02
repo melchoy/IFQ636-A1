@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router";
 
 import { Button } from "@otbt/ui";
 import { Link } from "@otbt/web";
 
+import { currentCustomerQueryOptions } from "../../../modules/customers/auth/customer-auth.query";
+import { getSessionToken } from "../../../modules/customers/auth/customer-auth.storage";
 import { ProductCard } from "../../../modules/products/ui/product-card";
 import { usePublicProductsQuery } from "../../../modules/products/products.query";
 
@@ -22,7 +25,13 @@ export function HomePage() {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [visibleProductCount, setVisibleProductCount] =
     useState(PRODUCT_PAGE_SIZE);
+  const hasSessionToken = Boolean(getSessionToken());
+  const currentCustomerQuery = useQuery(currentCustomerQueryOptions());
   const { data, isError, isLoading } = usePublicProductsQuery();
+  const heroAccountAction =
+    hasSessionToken && !currentCustomerQuery.isError
+      ? { label: "Orders", to: "/orders" }
+      : { label: "Sign in", to: "/login" };
   const allProducts = data?.products ?? [];
   const products = useMemo(
     () => allProducts.slice(0, visibleProductCount),
@@ -87,8 +96,8 @@ export function HomePage() {
                 Shop flowers
               </Button>
               <Button asChild variant="secondary">
-                <Link to="/sign-in" unstyled>
-                  Sign in
+                <Link to={heroAccountAction.to} unstyled>
+                  {heroAccountAction.label}
                 </Link>
               </Button>
             </div>
