@@ -27,6 +27,7 @@ Password: password
 Storefront customer accounts can be created from the public storefront. Seeded customer accounts are also available if the deployed database has been seeded:
 
 ```text
+Email: customer@example.com
 Password: password
 ```
 
